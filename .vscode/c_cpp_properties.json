@@ -3,7 +3,20 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/STM32F4/HAL/Inc/*",
+                "${workspaceFolder}/STM32F4/HAL/Src/*",
+                "${workspaceFolder}/STM32F4/HAL/rtos/*",
+                "${workspaceFolder}/STM32F4/HAL/rtos/Inc/*",
+                "${workspaceFolder}/STM32F4/cxxsupport/*",
+                "${workspaceFolder}/STM32F4/middleware/**",
+                "${workspaceFolder}/STM32F4/STM32F4xx_HAL_Driver/**",
+                "${workspaceFolder}/STM32F4/STM32F4xx_HAL_Driver/Inc/**",
+                "${workspaceFolder}/STM32F4/STM32F4xx_HAL_Driver/Src/**",
+                "${workspaceFolder}/ok-drivers/**",
+                "${workspaceFolder}/STM32F4/System/*",
+                "${workspaceFolder}/STM32F4/System/Inc/*",
+                "${workspaceFolder}/STM32F4/System/Src/*"
             ],
             "defines": [],
             "macFrameworkPath": [

@@ -1,4 +1,3 @@
-include ../STM32F4/Makefile
 
 ######################################
 # target
@@ -32,15 +31,126 @@ BUILD_DIR = build
 # source
 ######################################
 
-SRCDIRS = SuperSeq STM32F4
+# SRCDIRS = SuperSeq STM32F4
 
 # # Source files to compile
 # CFILES = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
 # CPPFILES = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.cpp))
 # OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
+
+######################################
+# source
+######################################
+# C sources
+
+C_SOURCES += \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_gpio.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
+STM32F4/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_exti.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c \
+STM32F4/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
+STM32F4/middleware/FreeRTOS/Source/croutine.c \
+STM32F4/middleware/FreeRTOS/Source/event_groups.c \
+STM32F4/middleware/FreeRTOS/Source/list.c \
+STM32F4/middleware/FreeRTOS/Source/queue.c \
+STM32F4/middleware/FreeRTOS/Source/stream_buffer.c \
+STM32F4/middleware/FreeRTOS/Source/tasks.c \
+STM32F4/middleware/FreeRTOS/Source/timers.c \
+STM32F4/middleware/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c \
+STM32F4/middleware/FreeRTOS/Source/portable/MemMang/heap_4.c \
+STM32F4/middleware/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
+STM32F4/system/Src/freertos.c \
+STM32F4/system/Src/stm32f4xx_hal_timebase_tim.c \
+STM32F4/system/Src/stm32f4xx_hal_msp.c \
+STM32F4/system/Src/stm32f4xx_it.c \
+STM32F4/system/Src/system_stm32f4xx.c \
+STM32F4/system/Src/system_clock_config.c
+
 CPP_SOURCES += \
-Src/main.cpp
+STM32F4/HAL/Src/gpio_api.cpp \
+STM32F4/HAL/Src/error_handler.cpp \
+STM32F4/HAL/Src/Flash.cpp \
+STM32F4/HAL/Src/I2C.cpp \
+STM32F4/HAL/Src/InterruptIn.cpp \
+STM32F4/HAL/Src/logger.cpp \
+STM32F4/HAL/Src/SPI.cpp \
+STM32F4/HAL/Src/DigitalIn.cpp \
+STM32F4/HAL/Src/DigitalOut.cpp \
+STM32F4/HAL/Src/SuperClock.cpp \
+STM32F4/HAL/Src/tim_api.cpp \
+STM32F4/HAL/rtos/Src/SoftwareTimer.cpp \
+STM32F4/HAL/rtos/Src/Mutex.cpp \
+ok-drivers/drivers/CAP1208/CAP1208.cpp \
+ok-drivers/drivers/DAC8554/DAC8554.cpp \
+ok-drivers/drivers/SX1509/SX1509.cpp \
+ok-drivers/drivers/IS31FL3739/IS31FL3739.cpp \
+ok-drivers/drivers/MPR121/MPR121.cpp \
+ok-drivers/drivers/MCP23017/MCP23017.cpp \
+ok-drivers/utils/Algorithms/Algorithms.cpp \
+ok-drivers/utils/ArrayMethods/ArrayMethods.cpp \
+ok-drivers/utils/BitwiseMethods/BitwiseMethods.cpp \
+SuperSeq/Src/main.cpp
+
+# C includes
+C_INCLUDES += \
+-ISTM32F4/HAL/Inc \
+-ISTM32F4/HAL/rtos/Inc \
+-ISTM32F4/cxxsupport \
+-ISTM32F4/STM32F4xx_HAL_Driver/Inc \
+-ISTM32F4/STM32F4xx_HAL_Driver/Inc/Legacy \
+-ISTM32F4/CMSIS/Device/ST/STM32F4xx/Include \
+-ISTM32F4/CMSIS/Include \
+-ISTM32F4/middleware/FreeRTOS/Source/include \
+-ISTM32F4/middleware/FreeRTOS/Source/CMSIS_RTOS_V2 \
+-ISTM32F4/middleware/FreeRTOS/Source/portable/GCC/ARM_CM4F \
+-ISTM32F4/system/Inc \
+-Iok-drivers/drivers/CAP1208 \
+-Iok-drivers/drivers/DAC8554 \
+-Iok-drivers/drivers/SX1509 \
+-Iok-drivers/drivers/IS31FL3739 \
+-Iok-drivers/drivers/MPR121 \
+-Iok-drivers/drivers/MCP23017 \
+-Iok-drivers/drivers/TCA9548A \
+-Iok-drivers/utils/Algorithms \
+-Iok-drivers/utils/ArrayMethods \
+-Iok-drivers/utils/BitwiseMethods \
+-Iok-drivers/utils/OK_I2C \
+-ISuperSeq/Inc \
+
+# C++ includes
+CPP_INCLUDES = \
+
+# AS includes
+AS_INCLUDES = 
+
+# ASM sources ("Assembly Language") - defines main() function
+ASM_SOURCES =  \
+STM32F4/startup_stm32f446xx.s
+
+#######################################
+# LDFLAGS
+#######################################
+# link script
+LDSCRIPT = STM32F4/STM32F446RETx_FLASH.ld
 
 
 #######################################
@@ -95,14 +205,6 @@ C_DEFS =  \
 -DSTM32F446xx
 
 
-# AS includes
-AS_INCLUDES = 
-
-# C includes
-C_INCLUDES += \
--IInc \
-
-CPP_INCLUDES = \
 
 ###########
 
