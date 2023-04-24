@@ -58,6 +58,15 @@ CPP_SOURCES += \
 ../STM32F4/HAL/Src/tim_api.cpp \
 ../STM32F4/HAL/rtos/Src/SoftwareTimer.cpp \
 ../STM32F4/HAL/rtos/Src/Mutex.cpp \
+../ok-drivers/drivers/CAP1208/CAP1208.cpp \
+../ok-drivers/drivers/DAC8554/DAC8554.cpp \
+../ok-drivers/drivers/SX1509/SX1509.cpp \
+../ok-drivers/drivers/IS31FL3739/IS31FL3739.cpp \
+../ok-drivers/drivers/MPR121/MPR121.cpp \
+../ok-drivers/drivers/MCP23017/MCP23017.cpp \
+../ok-drivers/utils/Algorithms/Algorithms.cpp \
+../ok-drivers/utils/ArrayMethods/ArrayMethods.cpp \
+../ok-drivers/utils/BitwiseMethods/BitwiseMethods.cpp
 
 
 C_INCLUDES += \
@@ -71,7 +80,18 @@ C_INCLUDES += \
 -I../STM32F4/middleware/FreeRTOS/Source/include \
 -I../STM32F4/middleware/FreeRTOS/Source/CMSIS_RTOS_V2 \
 -I../STM32F4/middleware/FreeRTOS/Source/portable/GCC/ARM_CM4F \
--I../STM32F4/system/Inc
+-I../STM32F4/system/Inc \
+-I../ok-drivers/drivers/CAP1208 \
+-I../ok-drivers/drivers/DAC8554 \
+-I../ok-drivers/drivers/SX1509 \
+-I../ok-drivers/drivers/IS31FL3739 \
+-I../ok-drivers/drivers/MPR121 \
+-I../ok-drivers/drivers/MCP23017 \
+-I../ok-drivers/drivers/TCA9548A \
+-I../ok-drivers/utils/Algorithms \
+-I../ok-drivers/utils/ArrayMethods \
+-I../ok-drivers/utils/BitwiseMethods \
+-I../ok-drivers/utils/OK_I2C \
 
 
 # ASM sources ("Assembly Language") - defines main() function

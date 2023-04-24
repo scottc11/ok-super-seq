@@ -1,4 +1,4 @@
-# include ../STM32F4/Makefile
+include ../STM32F4/Makefile
 
 ######################################
 # target
@@ -34,10 +34,10 @@ BUILD_DIR = build
 
 SRCDIRS = SuperSeq STM32F4
 
-# Source files to compile
-CFILES = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
-CPPFILES = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.cpp))
-OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
+# # Source files to compile
+# CFILES = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
+# CPPFILES = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.cpp))
+# OBJFILES = $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
 CPP_SOURCES += \
 Src/main.cpp
