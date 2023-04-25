@@ -4,6 +4,8 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/STM32F4/CMSIS/Device/ST/STM32F4xx/Include/**",
+                "${workspaceFolder}/STM32F4/CMSIS/Device/ST/STM32F4xx/Source/**",
                 "${workspaceFolder}/STM32F4/HAL/Inc/*",
                 "${workspaceFolder}/STM32F4/HAL/Src/*",
                 "${workspaceFolder}/STM32F4/HAL/rtos/*",
@@ -18,14 +20,14 @@
                 "${workspaceFolder}/STM32F4/System/Inc/*",
                 "${workspaceFolder}/STM32F4/System/Src/*"
             ],
-            "defines": [],
+            "defines": ["USE_HAL_DRIVER", "STM32F446xx"],
             "macFrameworkPath": [
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++11",
-            "intelliSenseMode": "macos-gcc-arm"
+            "intelliSenseMode": "macos-clang-arm64"
         }
     ],
     "version": 4
