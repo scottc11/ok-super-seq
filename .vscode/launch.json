@@ -22,6 +22,25 @@
             "runToMain": true,
             "svdFile": "./.vscode/STM32F446.svd",
             "preLaunchTask": "Build"
+        },
+        {
+            "name": "Debug: Counterpoint",
+            "cwd": "${workspaceRoot}",
+            "executable": "Counterpoint/build/counterpoint.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f4x.cfg",
+            ],
+            "openOCDLaunchCommands": [
+                "init",
+                "reset init"
+            ],
+            "runToMain": true,
+            "svdFile": "./.vscode/STM32F446.svd",
+            "preLaunchTask": "Build"
         }
     ]
 }

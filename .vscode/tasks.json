@@ -14,16 +14,6 @@
             "problemMatcher": []
         },
         {
-            "label": "Build Serial Debug",
-            "type": "shell",
-            "command": "make SERIAL_DEBUG=1",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Upload",
             "type": "shell",
             "command": "make program",
@@ -51,19 +41,6 @@
             },
             "dependsOn": [
                 "Build",
-                "Upload"
-            ],
-            "dependsOrder": "sequence",
-            "problemMatcher": []
-        },
-        {
-            "label": "Build and Upload Debug",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "dependsOn": [
-                "Build Serial Debug",
                 "Upload"
             ],
             "dependsOrder": "sequence",

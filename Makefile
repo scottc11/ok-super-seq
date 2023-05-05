@@ -19,7 +19,7 @@ SERIAL_DEBUG ?= 0
 OPT = -Og
 
 # get firmware version from git
-FIRMWARE_VERSION = nope
+FIRMWARE_VERSION = $(shell git rev-parse --short HEAD)
 
 #######################################
 # paths
@@ -107,7 +107,8 @@ ok-drivers/drivers/IS31FL3246/IS31FL3246.cpp \
 ok-drivers/utils/Algorithms/Algorithms.cpp \
 ok-drivers/utils/ArrayMethods/ArrayMethods.cpp \
 ok-drivers/utils/BitwiseMethods/BitwiseMethods.cpp \
-SuperSeq/Src/main.cpp
+SuperSeq/Src/main.cpp \
+SuperSeq/Src/SeqControl.cpp
 
 # C includes
 C_INCLUDES += \
