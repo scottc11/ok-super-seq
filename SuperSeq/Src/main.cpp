@@ -171,6 +171,23 @@ int main(void)
     }
 }
 
+int main(void) {
+    HAL_Init();
+
+    SystemClock_Config();
+
+    HAL_Delay(100);
+
+    xTaskCreate(taskMain, "taskMain", 512, NULL, 1, &th_main);
+    xTaskCreate(task_interrupt_handler, "ISR handler", RTOS_STACK_SIZE_MIN, &controller, RTOS_PRIORITY_HIGH + 1, NULL);
+
+    vTaskStartScheduler();
+
+    while(1) {
+
+    }
+}
+
 void gpio1_init()
 {
     gpio1.init();
