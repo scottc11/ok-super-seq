@@ -107,8 +107,8 @@ ok-drivers/drivers/IS31FL3246/IS31FL3246.cpp \
 ok-drivers/utils/Algorithms/Algorithms.cpp \
 ok-drivers/utils/ArrayMethods/ArrayMethods.cpp \
 ok-drivers/utils/BitwiseMethods/BitwiseMethods.cpp \
-SuperSeq/Src/main.cpp \
-SuperSeq/Src/SeqControl.cpp
+
+CPP_SOURCES += $(shell find SuperSeq -name '*.cpp')
 
 # C includes
 C_INCLUDES += \
