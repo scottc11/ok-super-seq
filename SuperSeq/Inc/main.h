@@ -7,6 +7,7 @@
 #define I2C3_SCL PA_8
 
 #define TOUCH_INT PC_12
+#define EXT_PPQN_1 PC_10
 
 #define MUX_1_A PC_0
 #define MUX_1_B PC_1
@@ -27,3 +28,4 @@
 #define ISR_ID_GPIO1 11
 #define ISR_ID_GPIO2 12
 #define ISR_ID_GPIO3 13
+#define ISR_ID_PPQN_1 14

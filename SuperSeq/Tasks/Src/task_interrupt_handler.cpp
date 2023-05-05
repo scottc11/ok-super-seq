@@ -29,6 +29,9 @@ void task_interrupt_handler(void *params)
             logger_log("\n### Touch Pads ISR ###\n");
             // controller->pollTouchPads();
             break;
+        case ISR_ID_PPQN_1:
+            controller->advanceAll();
+            break;
         default:
             break;
         }

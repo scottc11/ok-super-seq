@@ -1,52 +1,39 @@
 #pragma once
 
 #include "main.h"
+#include "tasks.h"
 #include "MPR121.h"
+#include "Sequence.h"
 
 class SeqControl
 {
 public:
-    SeqControl(MPR121 *tp_ptr)
+    SeqControl(MPR121 *tp_ptr, Sequence *seq1_ptr, Sequence *seq2_ptr, Sequence *seq3_ptr, Sequence *seq4_ptr) : int_ppqn_1(EXT_PPQN_1, PinMode::PullUp)
     {
         touch_pads = tp_ptr;
+        sequences[0] = seq1_ptr;
+        sequences[1] = seq2_ptr;
+        sequences[2] = seq3_ptr;
+        sequences[3] = seq4_ptr;
         _pad = 6;
+        
     }
 
+    InterruptIn int_ppqn_1;
+    
     MPR121 *touch_pads;
+    
+    Sequence *sequences[4];
+
     bool touched;
     uint8_t _pad;
 
-    void init()
-    {
-        // initialize channel touch pads
-        touch_pads->init();
-        // touch_pads->attachInterruptCallback(callback(this, &SeqControl::handleTouchInterrupt));
-        touch_pads->attachCallbackTouched(callback(this, &SeqControl::onTouch));
-        touch_pads->attachCallbackReleased(callback(this, &SeqControl::onRelease));
-        touch_pads->enable();
-    }
+    void init();
+    void ppqn1_handler();
+    void advanceAll();
 
-    void poll()
-    {
-        if (touch_pads->interruptDetected())
-        {
-            touch_pads->handleTouch();
-            this->_pad += 1;
-            touched = false;
-        }
-    }
-
-    void handleTouchInterrupt()
-    {
-        touched = true;
-    }
-
-    void onTouch(uint8_t pad)
-    {
-        this->_pad = pad + 8;
-    }
-
-    void onRelease(uint8_t pad)
-    {
-    }
+    void poll();
+    void handleTouchInterrupt();
+    void onTouch(uint8_t pad);
+    void onRelease(uint8_t pad);
 };
