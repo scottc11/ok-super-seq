@@ -1,4 +1,5 @@
 #include "main.h"
+#include "tasks.h"
 #include "tim_api.h"
 #include "logger.h"
 #include "Callback.h"
@@ -24,17 +25,11 @@ MCP23017 gpio1(&i2c3, 0x20);
 MCP23017 gpio2(&i2c3, 0x24);
 MCP23017 gpio3(&i2c3, 0x22);
 
-SX1509 ledsA(&i2c3, SX1509_CHAN_A_ADDR);
-SX1509 ledsB(&i2c3, SX1509_CHAN_B_ADDR);
-SX1509 ledsC(&i2c3, SX1509_CHAN_C_ADDR);
-SX1509 ledsD(&i2c3, SX1509_CHAN_D_ADDR);
-
 IS31FL3246 led_driver(&i2c3);
-IS31FL3246 led_driver2(&i2c3, IS31FL3246_ADDR_VCC);
 
 MPR121 touch_pads(&i2c3, TOUCH_INT);
 
-// SeqControl controls(&touch_pads);
+SeqControl controller(&touch_pads);
 
 uint8_t portB = 0b00010101;
 uint8_t pwm = 127;
@@ -49,17 +44,9 @@ void int_callback_gpio3() {
     changed = true;
 }
 
-int main(void)
+void task_main(void *pvParameters)
 {
-    HAL_Init();
-    
-    SystemClock_Config();
-
-    HAL_Delay(100);
-
     i2c3.init();
-
-    bool isActive = gpio3.isConnected();
 
     gate.write(1);
 
@@ -178,7 +165,7 @@ int main(void) {
 
     HAL_Delay(100);
 
-    xTaskCreate(taskMain, "taskMain", 512, NULL, 1, &th_main);
+    xTaskCreate(task_main, "task_main", 512, NULL, 1, &th_main);
     xTaskCreate(task_interrupt_handler, "ISR handler", RTOS_STACK_SIZE_MIN, &controller, RTOS_PRIORITY_HIGH + 1, NULL);
 
     vTaskStartScheduler();

@@ -7,25 +7,25 @@
  */
 void task_interrupt_handler(void *params)
 {
-    Controller *controller = (Controller *)params;
-    thInterruptHandler = xTaskGetCurrentTaskHandle();
-    qhInterruptQueue = xQueueCreate(64, sizeof(uint8_t));
+    SeqControl *controller = (SeqControl *)params;
+    th_interrupt_handler = xTaskGetCurrentTaskHandle();
+    qh_interrupt_queue = xQueueCreate(64, sizeof(uint8_t));
     logger_log_task_watermark();
     uint8_t isr_source;
     while (1)
     {
-        xQueueReceive(qhInterruptQueue, &isr_source, portMAX_DELAY);
+        xQueueReceive(qh_interrupt_queue, &isr_source, portMAX_DELAY);
         switch (isr_source)
         {
-        case ISR_ID_TOGGLE_SWITCHES:
+        case ISR_ID_GPIO1:
             logger_log("\n### Toggle Switch ISR ###\n");
-            controller->switches->updateDegreeStates();
+            // controller->switches->updateDegreeStates();
             break;
-        case ISR_ID_TACTILE_BUTTONS:
+        case ISR_ID_GPIO2:
             logger_log("\n### Tactile Buttons ISR ###\n");
             // controller->pollButtons();
             break;
-        case ISR_ID_TOUCH_PADS:
+        case ISR_ID_GPIO3:
             logger_log("\n### Touch Pads ISR ###\n");
             // controller->pollTouchPads();
             break;
