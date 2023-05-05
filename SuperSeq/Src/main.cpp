@@ -9,17 +9,20 @@
 #include "IS31FL3246.h"
 #include "MPR121.h"
 #include "MCP23017.h"
+#include "CD4051.h"
 #include "SX1509.h"
 #include "SeqControl.h"
 
 DigitalOut gate(PB_10);
-DigitalOut mux_1_A(PC_0);
-DigitalOut mux_1_B(PC_1);
-DigitalOut mux_1_C(PC_2);
 
 InterruptIn int_pin_gpio3(PA_2, PinMode::PullUp); // interupt pin for buttons MCP23017 io
 
 I2C i2c3(I2C3_SDA, I2C3_SCL, I2C::Instance::I2C_3);
+
+CD4051 mux1(MUX_1_A, MUX_1_B, MUX_1_C);
+CD4051 mux2(MUX_2_A, MUX_2_B, MUX_2_C);
+CD4051 mux3(MUX_3_A, MUX_3_B, MUX_3_C);
+CD4051 mux4(MUX_4_A, MUX_4_B, MUX_4_C);
 
 MCP23017 gpio1(&i2c3, 0x20);
 MCP23017 gpio2(&i2c3, 0x24);
@@ -79,72 +82,80 @@ void task_main(void *pvParameters)
             led_driver.setChannelPWM(led_arr_b[0], pwm);
             led_driver.setChannelPWM(led_arr_a[7], 0);
             led_driver.setChannelPWM(led_arr_b[7], 0);
-            mux_1_A.write(0);
-            mux_1_B.write(0);
-            mux_1_C.write(0);
+            mux1.activateChannel(0);
+            mux2.activateChannel(0);
+            mux3.activateChannel(0);
+            mux4.activateChannel(0);
             break;
         case 1:
             led_driver.setChannelPWM(led_arr_a[1], pwm);
             led_driver.setChannelPWM(led_arr_b[1], pwm);
             led_driver.setChannelPWM(led_arr_a[0], 0);
             led_driver.setChannelPWM(led_arr_b[0], 0);
-            mux_1_A.write(1);
-            mux_1_B.write(0);
-            mux_1_C.write(0);
+            mux1.activateChannel(1);
+            mux2.activateChannel(1);
+            mux3.activateChannel(1);
+            mux4.activateChannel(1);
             break;
         case 2:
             led_driver.setChannelPWM(led_arr_a[2], pwm);
             led_driver.setChannelPWM(led_arr_b[2], pwm);
             led_driver.setChannelPWM(led_arr_a[1], 0);
             led_driver.setChannelPWM(led_arr_b[1], 0);
-            mux_1_A.write(0);
-            mux_1_B.write(1);
-            mux_1_C.write(0);
+            mux1.activateChannel(2);
+            mux2.activateChannel(2);
+            mux3.activateChannel(2);
+            mux4.activateChannel(2);
             break;
         case 3:
             led_driver.setChannelPWM(led_arr_a[3], pwm);
             led_driver.setChannelPWM(led_arr_b[3], pwm);
             led_driver.setChannelPWM(led_arr_a[2], 0);
             led_driver.setChannelPWM(led_arr_b[2], 0);
-            mux_1_A.write(1);
-            mux_1_B.write(1);
-            mux_1_C.write(0);
+            mux1.activateChannel(3);
+            mux2.activateChannel(3);
+            mux3.activateChannel(3);
+            mux4.activateChannel(3);
             break;
         case 4:
             led_driver.setChannelPWM(led_arr_a[4], pwm);
             led_driver.setChannelPWM(led_arr_b[4], pwm);
             led_driver.setChannelPWM(led_arr_a[3], 0);
             led_driver.setChannelPWM(led_arr_b[3], 0);
-            mux_1_A.write(0);
-            mux_1_B.write(0);
-            mux_1_C.write(1);
+            mux1.activateChannel(4);
+            mux2.activateChannel(4);
+            mux3.activateChannel(4);
+            mux4.activateChannel(4);
             break;
         case 5:
             led_driver.setChannelPWM(led_arr_a[5], pwm);
             led_driver.setChannelPWM(led_arr_b[5], pwm);
             led_driver.setChannelPWM(led_arr_a[4], 0);
             led_driver.setChannelPWM(led_arr_b[4], 0);
-            mux_1_A.write(1);
-            mux_1_B.write(0);
-            mux_1_C.write(1);
+            mux1.activateChannel(5);
+            mux2.activateChannel(5);
+            mux3.activateChannel(5);
+            mux4.activateChannel(5);
             break;
         case 6:
             led_driver.setChannelPWM(led_arr_a[6], pwm);
             led_driver.setChannelPWM(led_arr_b[6], pwm);
             led_driver.setChannelPWM(led_arr_a[5], 0);
             led_driver.setChannelPWM(led_arr_b[5], 0);
-            mux_1_A.write(0);
-            mux_1_B.write(1);
-            mux_1_C.write(1);
+            mux1.activateChannel(6);
+            mux2.activateChannel(6);
+            mux3.activateChannel(6);
+            mux4.activateChannel(6);
             break;
         case 7:
             led_driver.setChannelPWM(led_arr_a[7], pwm);
             led_driver.setChannelPWM(led_arr_b[7], pwm);
             led_driver.setChannelPWM(led_arr_a[6], 0);
             led_driver.setChannelPWM(led_arr_b[6], 0);
-            mux_1_A.write(1);
-            mux_1_B.write(1);
-            mux_1_C.write(1);
+            mux1.activateChannel(7);
+            mux2.activateChannel(7);
+            mux3.activateChannel(7);
+            mux4.activateChannel(7);
             break;
         default:
             break;

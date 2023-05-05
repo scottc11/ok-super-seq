@@ -99,6 +99,7 @@ ok-STM32F4/HAL/Src/SuperClock.cpp \
 ok-STM32F4/HAL/Src/tim_api.cpp \
 ok-STM32F4/HAL/rtos/Src/SoftwareTimer.cpp \
 ok-STM32F4/HAL/rtos/Src/Mutex.cpp \
+ok-STM32F4/drivers/Src/CD4051.cpp \
 ok-drivers/drivers/DAC8554/DAC8554.cpp \
 ok-drivers/drivers/SX1509/SX1509.cpp \
 ok-drivers/drivers/MPR121/MPR121.cpp \
@@ -123,6 +124,7 @@ C_INCLUDES += \
 -Iok-STM32F4/middleware/FreeRTOS/Source/CMSIS_RTOS_V2 \
 -Iok-STM32F4/middleware/FreeRTOS/Source/portable/GCC/ARM_CM4F \
 -Iok-STM32F4/system/Inc \
+-Iok-STM32F4/drivers/Inc \
 -Iok-drivers/drivers/DAC8554 \
 -Iok-drivers/drivers/SX1509 \
 -Iok-drivers/drivers/MPR121 \
