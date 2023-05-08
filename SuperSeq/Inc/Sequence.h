@@ -10,6 +10,8 @@ public:
     {
         leds = leds_ptr;
         index = _index;
+        currTouchedStep = 0;
+        prevTouchedStep = 0;
     }
 
     int index;
@@ -19,7 +21,16 @@ public:
 
     int currStep;
     int prevStep;
+    int currTouchedStep;
+    int prevTouchedStep;
+    bool override;
 
     void init();
     void advance();
+    void handleTouchedStep(int step);
+    void handleReleasedStep(int step);
+
+    void activateStep(int curr, int prev);
+
+    void setLED(int step, int pwm);
 };

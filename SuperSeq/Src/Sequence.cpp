@@ -20,7 +20,52 @@ void Sequence::advance() {
         currStep++;
     }
 
-    mux.activateChannel(currStep);
-    leds->setChannelPWM(CHANNEL_LED_PINS[index][currStep], 127);
-    leds->setChannelPWM(CHANNEL_LED_PINS[index][prevStep], 0);
+    if (override == false) {
+        activateStep(currStep, prevStep);
+    }
 }
+
+void Sequence::handleTouchedStep(int step)
+{
+    prevTouchedStep = currTouchedStep;
+    currTouchedStep = step;
+
+    if (currTouchedStep != currStep) {
+        activateStep(currTouchedStep, currStep);
+    } else {
+        // trigger clock out?
+    }
+    
+    if (currTouchedStep != prevTouchedStep)
+    {
+        setLED(prevTouchedStep, 0);
+    }
+    
+}
+
+void Sequence::handleReleasedStep(int step)
+{
+    if (step != currStep) {
+        activateStep(currStep, currTouchedStep);
+    }
+}
+
+void Sequence::activateStep(int curr, int prev) {
+    mux.activateChannel(curr);
+    setLED(curr, 127);
+    setLED(prev, 0);
+}
+
+void Sequence::setLED(int step, int pwm)
+{
+    leds->setChannelPWM(CHANNEL_LED_PINS[index][step], pwm);
+}
+
+// |  0  ||  1  ||  T  ||  3  ||  P  ||  5  ||  C  ||  7  |
+
+// |  0  ||  1  ||  2  ||  3  ||  4  ||  5  ||  6  ||  7  |
+
+/**
+ * if 
+ * 
+ */

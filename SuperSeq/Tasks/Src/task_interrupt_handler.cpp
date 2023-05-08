@@ -17,6 +17,10 @@ void task_interrupt_handler(void *params)
         xQueueReceive(qh_interrupt_queue, &isr_source, portMAX_DELAY);
         switch (isr_source)
         {
+        case ISR_ID_TOUCH:
+            controller->touch_pads->handleTouch();
+            break;
+
         case ISR_ID_GPIO1:
             logger_log("\n### Toggle Switch ISR ###\n");
             // controller->switches->updateDegreeStates();

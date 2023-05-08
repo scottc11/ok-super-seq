@@ -1,10 +1,9 @@
 #include "SeqControl.h"
 
-
 void SeqControl::init() {
     // initialize channel touch pads
     touch_pads->init();
-    // touch_pads->attachInterruptCallback(callback(this, &SeqControl::handleTouchInterrupt));
+    touch_pads->attachInterruptCallback(callback(this, &SeqControl::handleTouchInterrupt));
     touch_pads->attachCallbackTouched(callback(this, &SeqControl::onTouch));
     touch_pads->attachCallbackReleased(callback(this, &SeqControl::onRelease));
     touch_pads->enable();
@@ -22,32 +21,54 @@ void SeqControl::ppqn1_handler() {
 void SeqControl::advanceAll() {
     for (int i = 0; i < 4; i++)
     {
-        sequences[i]->advance();
+        channels[i]->advance();
     }
     
-}
-
-void SeqControl::poll()
-{
-    if (touch_pads->interruptDetected())
-    {
-        touch_pads->handleTouch();
-        this->_pad += 1;
-        touched = false;
-    }
 }
 
 void SeqControl::handleTouchInterrupt()
 {
-    touched = true;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint8_t isr_id = ISR_ID_TOUCH;
+    xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 void SeqControl::onTouch(uint8_t pad)
 {
-    this->_pad = pad + 8;
+    
+    if (pad < 8)
+    {        
+        int step = TOUCH_PAD_MAP[pad];
+        for (int i = 0; i < NUM_CHANNELS; i++)
+        {
+            // prevent seq.advance from advancing anything
+            channels[i]->override = true;
+            channels[i]->handleTouchedStep(step);
+        }
+    }
+    
 }
 
 void SeqControl::onRelease(uint8_t pad)
 {
-    
+    if (pad < 8) {
+        int step = TOUCH_PAD_MAP[pad];
+        for (int i = 0; i < NUM_CHANNELS; i++)
+        {
+            if (touch_pads->padIsTouched()) {
+                // if a pad is still touched, we want to snap back to the last touched pad
+                // if more than 2 pads touched, how do we know which was the last touched?
+                // you will need to create an array to hold all the curr touched pads, in the order they were touched
+                // [4, 5, 6, 0, 0, 0, 0, 0]
+
+                // channels[i]->activateStep(channels[i]->prevTouchedStep, channels[i]->currTouchedStep);
+                
+            } else {
+                // snap back to currStep
+                channels[i]->handleReleasedStep(step);
+                channels[i]->override = false;
+            }
+        }
+    }
 }

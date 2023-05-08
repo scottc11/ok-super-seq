@@ -3,6 +3,8 @@
 #include "cmsis_os.h"
 #include "common.h"
 
+#define NUM_CHANNELS 4
+
 #define I2C3_SDA PC_9
 #define I2C3_SCL PA_8
 
@@ -29,3 +31,4 @@
 #define ISR_ID_GPIO2 12
 #define ISR_ID_GPIO3 13
 #define ISR_ID_PPQN_1 14
+#define ISR_ID_TOUCH 15
