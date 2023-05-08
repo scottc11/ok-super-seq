@@ -21,8 +21,6 @@ InterruptIn int_pin_gpio3(PA_2, PinMode::PullUp); // interupt pin for buttons MC
 
 I2C i2c3(I2C3_SDA, I2C3_SCL, I2C::Instance::I2C_3);
 
-
-
 MCP23017 gpio1(&i2c3, 0x20);
 MCP23017 gpio2(&i2c3, 0x24);
 MCP23017 gpio3(&i2c3, 0x22);
@@ -31,10 +29,10 @@ IS31FL3246 led_driver(&i2c3);
 
 MPR121 touch_pads(&i2c3, TOUCH_INT);
 
-Sequence seq1(0, &led_driver, MUX_1_A, MUX_1_B, MUX_1_C);
-Sequence seq2(1, &led_driver, MUX_2_A, MUX_2_B, MUX_2_C);
-Sequence seq3(2, &led_driver, MUX_3_A, MUX_3_B, MUX_3_C);
-Sequence seq4(3, &led_driver, MUX_4_A, MUX_4_B, MUX_4_C);
+Sequence seq1(0, &led_driver, CLOCK_OUT_1, MUX_1_A, MUX_1_B, MUX_1_C);
+Sequence seq2(1, &led_driver, CLOCK_OUT_2, MUX_2_A, MUX_2_B, MUX_2_C);
+Sequence seq3(2, &led_driver, CLOCK_OUT_3, MUX_3_A, MUX_3_B, MUX_3_C);
+Sequence seq4(3, &led_driver, CLOCK_OUT_4, MUX_4_A, MUX_4_B, MUX_4_C);
 
 SeqControl controller(&touch_pads, &gpio2, &seq1, &seq2, &seq3, &seq4);
 

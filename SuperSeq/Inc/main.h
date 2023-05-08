@@ -16,6 +16,11 @@
 
 #define EXT_PPQN_1 PC_10
 
+#define CLOCK_OUT_1 PB_10
+#define CLOCK_OUT_2 PB_12
+#define CLOCK_OUT_3 PC_3
+#define CLOCK_OUT_4 PA_15
+
 #define MUX_1_A PC_0
 #define MUX_1_B PC_1
 #define MUX_1_C PC_2

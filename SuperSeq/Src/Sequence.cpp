@@ -13,6 +13,18 @@ void Sequence::init() {
 
 void Sequence::setPlaybackMode(PlaybackMode mode) {
     pbMode = mode;
+    switch (pbMode)
+    {
+    case PlaybackMode::DEFAULT:
+        direction = FORWARD;
+        break;
+    case PlaybackMode::PINGPONG:
+        break;
+    case PlaybackMode::PEDAL:
+        break;
+    case PlaybackMode::TOUCH:
+        break;
+    }
 }
 
 void Sequence::setDirection(Direction _direction) {
@@ -94,6 +106,8 @@ void Sequence::activateStep(int curr, int prev) {
         setLED(curr, 127);
         setLED(prev, 0);
     }
+
+    trigOut.write(1);
 }
 
 void Sequence::setLED(int step, int pwm)
