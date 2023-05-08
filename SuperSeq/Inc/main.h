@@ -9,6 +9,11 @@
 #define I2C3_SCL PA_8
 
 #define TOUCH_INT PC_12
+
+#define GPIO1_INT PA_0
+#define GPIO2_INT PA_1
+#define GPIO3_INT PA_2
+
 #define EXT_PPQN_1 PC_10
 
 #define MUX_1_A PC_0

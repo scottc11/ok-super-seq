@@ -11,13 +11,35 @@ void Sequence::init() {
 
 }
 
+void Sequence::setPlaybackMode(PlaybackMode mode) {
+    pbMode = mode;
+}
+
+void Sequence::setDirection(Direction _direction) {
+    direction = _direction;
+}
+
 void Sequence::advance() {
     prevStep = currStep;
 
-    if (currStep + 1 > 7) {
-        currStep = 0;
-    } else {
-        currStep++;
+    if (direction == FORWARD)
+    {
+        if (currStep == (length - 1))
+        {
+            currStep = 0;
+        }
+        else
+        {
+            currStep++;
+        }
+    }
+    else
+    {
+        if (currStep == 0) {
+            currStep = length - 1;
+        } else {
+            currStep--;
+        }
     }
 
     if (override == false) {
@@ -27,6 +49,11 @@ void Sequence::advance() {
 
 void Sequence::handleTouchedStep(int step)
 {
+    // compare the currTouched and prevTouched from MPR121
+    // if 
+    // for each touched pad add to touched array
+    
+
     prevTouchedStep = currTouchedStep;
     currTouchedStep = step;
 
@@ -60,12 +87,3 @@ void Sequence::setLED(int step, int pwm)
 {
     leds->setChannelPWM(CHANNEL_LED_PINS[index][step], pwm);
 }
-
-// |  0  ||  1  ||  T  ||  3  ||  P  ||  5  ||  C  ||  7  |
-
-// |  0  ||  1  ||  2  ||  3  ||  4  ||  5  ||  6  ||  7  |
-
-/**
- * if 
- * 
- */

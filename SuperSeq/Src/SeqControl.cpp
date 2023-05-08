@@ -72,3 +72,31 @@ void SeqControl::onRelease(uint8_t pad)
         }
     }
 }
+const int SW1_POS1 = 0;
+const int SW1_POS2 = 1;
+const int SW1_POS3 = 2;
+const int SW1_POS4 = 3;
+
+void SeqControl::gpio_handler(uint16_t state)
+{
+    bool pin_state;
+    for (int i = 0; i < 16; i++)
+    {
+        pin_state = bitwise_read_bit(state, i);
+        if (pin_state == false) {
+            switch (i)
+            {
+            case SW1_POS1:
+                channels[0]->setDirection(Sequence::Direction::FORWARD);
+                break;
+            
+            case SW1_POS2:
+                channels[0]->setDirection(Sequence::Direction::BACKWARD);
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+}
