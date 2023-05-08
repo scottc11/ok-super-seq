@@ -87,11 +87,11 @@ void SeqControl::gpio_handler(uint16_t state)
             switch (i)
             {
             case SW1_POS1:
-                channels[0]->setDirection(Sequence::Direction::FORWARD);
+                channels[0]->setPlaybackMode(Sequence::PlaybackMode::DEFAULT);
                 break;
             
             case SW1_POS2:
-                channels[0]->setDirection(Sequence::Direction::BACKWARD);
+                channels[0]->setPlaybackMode(Sequence::PlaybackMode::PINGPONG);
                 break;
 
             default:

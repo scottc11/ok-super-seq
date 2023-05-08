@@ -26,7 +26,12 @@ void Sequence::advance() {
     {
         if (currStep == (length - 1))
         {
-            currStep = 0;
+            if (pbMode == PlaybackMode::PINGPONG)
+            {
+                direction = !direction;
+            } else {
+                currStep = 0;
+            }
         }
         else
         {
@@ -36,7 +41,13 @@ void Sequence::advance() {
     else
     {
         if (currStep == 0) {
-            currStep = length - 1;
+            
+            if (pbMode == PlaybackMode::PINGPONG)
+            {
+                direction = !direction;
+            } else {
+                currStep = length - 1;
+            }
         } else {
             currStep--;
         }
@@ -78,9 +89,11 @@ void Sequence::handleReleasedStep(int step)
 }
 
 void Sequence::activateStep(int curr, int prev) {
-    mux.activateChannel(curr);
-    setLED(curr, 127);
-    setLED(prev, 0);
+    if (curr != prev) {
+        mux.activateChannel(curr);
+        setLED(curr, 127);
+        setLED(prev, 0);
+    }
 }
 
 void Sequence::setLED(int step, int pwm)
