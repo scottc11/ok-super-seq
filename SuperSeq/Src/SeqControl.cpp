@@ -72,31 +72,90 @@ void SeqControl::onRelease(uint8_t pad)
         }
     }
 }
-const int SW1_POS1 = 0;
-const int SW1_POS2 = 1;
-const int SW1_POS3 = 2;
-const int SW1_POS4 = 3;
 
-void SeqControl::gpio_handler(uint16_t state)
+// first compare the new state to the prev state to see whats changed
+void SeqControl::gpio_handler(int id, uint16_t state)
 {
     bool pin_state;
     for (int i = 0; i < 16; i++)
     {
         pin_state = bitwise_read_bit(state, i);
         if (pin_state == false) {
-            switch (i)
+            switch (id)
             {
-            case SW1_POS1:
-                channels[0]->setPlaybackMode(Sequence::PlaybackMode::DEFAULT);
+            case 1:
+                /* code */
                 break;
-            
-            case SW1_POS2:
-                channels[0]->setPlaybackMode(Sequence::PlaybackMode::PINGPONG);
+            case 2:
+                handleGPIO2(i, pin_state);
                 break;
-
-            default:
+            case 3:
+                /* code */
                 break;
             }
         }
     }
 }
+
+void SeqControl::handleGPIO2(uint8_t pin, bool state)
+{
+    switch (pin)
+    {
+    case GPIO2::SW1_POS1:
+        channels[0]->setPlaybackMode(Sequence::PlaybackMode::DEFAULT);
+        break;
+
+    case GPIO2::SW1_POS2:
+        channels[0]->setPlaybackMode(Sequence::PlaybackMode::PINGPONG);
+        break;
+
+    case GPIO2::SW1_POS3:
+        channels[0]->setPlaybackMode(Sequence::PlaybackMode::PEDAL);
+        break;
+
+    case GPIO2::SW1_POS4:
+        channels[0]->setPlaybackMode(Sequence::PlaybackMode::TOUCH);
+        break;
+
+    case GPIO2::CS_A_UP:
+        // channel 1 adds its clock to channel 0
+        break;
+
+    case GPIO2::CS_A_DOWN:
+        // channel 0 adds its clock to channel 1
+        break;
+
+    case GPIO2::MS_A_UP:
+        // channel 1 mods channel 0
+        break;
+
+    case GPIO2::MS_A_DOWN:
+        // channel 0 mods channel 1
+        break;
+
+    case GPIO2::ENC2_BTN:
+        break;
+
+    case GPIO2::SW2_POS1:
+        break;
+
+    case GPIO2::SW2_POS2:
+        break;
+
+    case GPIO2::SW2_POS3:
+        break;
+
+    case GPIO2::SW2_POS4:
+        break;
+
+    case GPIO2::ENC1_A:
+        break;
+
+    case GPIO2::ENC1_B:
+        break;
+
+    case GPIO2::ENC1_BTN:
+        break;
+    }
+    return;
+}    

@@ -36,11 +36,6 @@ Sequence seq4(3, &led_driver, CLOCK_OUT_4, MUX_4_A, MUX_4_B, MUX_4_C);
 
 SeqControl controller(&touch_pads, &gpio2, &seq1, &seq2, &seq3, &seq4);
 
-uint8_t portB = 0b00010101;
-uint8_t pwm = 127;
-bool flip = false;
-bool changed = false;
-
 void task_main(void *pvParameters)
 {
     i2c3.init();
