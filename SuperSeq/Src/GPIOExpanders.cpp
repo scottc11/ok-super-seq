@@ -61,7 +61,7 @@ void gpio2_init(MCP23017 *gpio)
     // B6 = ENC1 B
     // B7 = ENC1 BTN
     gpio->setDirection(MCP23017_PORTB, 0b11111111); // 1 = input, 0 = output
-    gpio->setInterupt(MCP23017_PORTB, 0b11111111);  // 1 = interupt, 0 = not interupt
+    gpio->setInterupt(MCP23017_PORTB, 0b10111111);  // 1 = interupt, 0 = not interupt
     gpio->setPullUp(MCP23017_PORTB, 0xff);
 
     gpio->digitalReadAB();

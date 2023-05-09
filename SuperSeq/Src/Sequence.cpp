@@ -8,7 +8,8 @@ int CHANNEL_LED_PINS[4][8] = {
 };
 
 void Sequence::init() {
-
+    clockDivider = 1;
+    clockMultiplier = 1;
 }
 
 void Sequence::setPlaybackMode(PlaybackMode mode) {
@@ -31,6 +32,16 @@ void Sequence::setDirection(Direction _direction) {
     direction = _direction;
 }
 
+void Sequence::setClockDivider(int value) {
+    if (clockDivider + value <= 0) {
+        clockDivider = 1;
+    }
+    else if (clockDivider + value <= 16)
+    {
+        clockDivider = clockDivider + value;
+    }
+}
+
 void Sequence::callback_ppqn() {
     trigOut.write(0); // always set the trig out back low 
 
@@ -38,12 +49,14 @@ void Sequence::callback_ppqn() {
         advance();
     }
 
-    if (currPulse < PPQN - 1) {
+    if (currPulse < (PPQN * clockDivider) - 1)
+    {
         currPulse++;
-    } else {
+    }
+    else
+    {
         currPulse = 0;
     }
-    
 }
 
 void Sequence::advance() {

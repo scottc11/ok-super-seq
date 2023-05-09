@@ -10,6 +10,11 @@ void SeqControl::init() {
 
     ext_step_int.rise(callback(this, &SeqControl::ext_step_handler));
     ext_pulse_int.rise(callback(this, &SeqControl::ext_pulse_handler));
+
+    for (int i = 0; i < NUM_CHANNELS; i++)
+    {
+        channels[i]->init();
+    }
 }
 
 void SeqControl::ext_step_handler() {
@@ -83,20 +88,20 @@ void SeqControl::onRelease(uint8_t pad)
 }
 
 // first compare the new state to the prev state to see whats changed
-void SeqControl::gpio_handler(int id, uint16_t state)
+void SeqControl::gpio_handler(int id, uint16_t pin_states)
 {
-    bool pin_state;
+    bool is_low;
     for (int i = 0; i < 16; i++)
     {
-        pin_state = bitwise_read_bit(state, i);
-        if (pin_state == false) {
+        is_low = bitwise_read_bit(pin_states, i);
+        if (is_low == false) {
             switch (id)
             {
             case 1:
                 /* code */
                 break;
             case 2:
-                handleGPIO2(i, pin_state);
+                handleGPIO2(i, pin_states);
                 break;
             case 3:
                 /* code */
@@ -106,7 +111,10 @@ void SeqControl::gpio_handler(int id, uint16_t state)
     }
 }
 
-void SeqControl::handleGPIO2(uint8_t pin, bool state)
+int encoder_states[8];
+int counter = 0;
+
+void SeqControl::handleGPIO2(uint8_t pin, uint16_t pin_states)
 {
     switch (pin)
     {
@@ -158,13 +166,31 @@ void SeqControl::handleGPIO2(uint8_t pin, bool state)
         break;
 
     case GPIO2::ENC1_A:
+        handleEncoder(0, pin_states);
         break;
 
     case GPIO2::ENC1_B:
+        // do nothing...
         break;
 
     case GPIO2::ENC1_BTN:
         break;
     }
     return;
-}    
+}
+
+void SeqControl::handleEncoder(int channel, uint16_t pin_states) {
+    int enc_chan_a_state = bitwise_read_bit(pin_states, ENC1_A);
+    int enc_chan_b_state = bitwise_read_bit(pin_states, ENC1_B);
+
+    if (enc_chan_a_state == 0 && enc_chan_b_state == 1)
+    {
+        // direction right
+        channels[channel]->setClockDivider(-1);
+    }
+    else if (enc_chan_a_state == 0 && enc_chan_b_state == 0)
+    {
+        // direction left
+        channels[channel]->setClockDivider(1);
+    }
+}

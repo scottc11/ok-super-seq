@@ -40,13 +40,15 @@ public:
     void ext_pulse_handler();
     void advanceAll();
 
-    void gpio_handler(int id, uint16_t state) __attribute__((optimize("O0")));
+    void gpio_handler(int id, uint16_t pin_states) __attribute__((optimize("O0")));
 
-    void handleGPIO2(uint8_t pin, bool state);
+    void handleGPIO2(uint8_t pin, uint16_t pin_states) __attribute__((optimize("O0")));
 
     void handleTouchInterrupt();
     void onTouch(uint8_t pad);
     void onRelease(uint8_t pad);
+
+    void handleEncoder(int channel, uint16_t pin_states);
 };
 
 enum GPIO1

@@ -47,6 +47,8 @@ public:
     bool direction;
     uint8_t length;
 
+    int clockDivider;
+    int clockMultiplier;
     int currPulse;
     int currStep;
     int prevStep;
@@ -57,6 +59,7 @@ public:
     void init();
     void setPlaybackMode(PlaybackMode mode);
     void setDirection(Direction _direction);
+    void setClockDivider(int value);
 
     void advance();
     void callback_ppqn();
