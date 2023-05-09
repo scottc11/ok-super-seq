@@ -39,43 +39,11 @@ public:
     void onTouch(uint8_t pad);
     void onRelease(uint8_t pad);
 
-    void handleEncoder(int channel, uint16_t pin_states);
-};
-
-enum GPIO1
-{
-    CS_B_UP,
-    CS_B_DOWN,
-    MS_B_UP,
-    MS_B_DOWN,
-    SW3_POS4,
-    SW3_POS3,
-    SW3_POS2,
-    SW3_POS1,
-    ENC4_BTN,
-    ENC3_BTN,
-    B4,
-    B5,
-    ENC2_A,
-    ENC2_B,
-};
-
-enum GPIO3
-{
-    MS_C_UP,
-    MS_C_DOWN,
-    CS_C_UP,
-    CS_C_DOWN,
-    SW4_POS4,
-    SW4_POS3,
-    SW4_POS2,
-    SW4_POS1,
-    RESET_LED,
-    RESET_BTN,
-    RUN_LED,
-    RUN_BTN,
-    ALT_LED,
-    ALT_BTN,
-    ENC4_A,
-    ENC4_B
+    void handleEncoder(int channel, int bit_position, uint16_t pin_states);
+    void handleEncoderPress(int channel);
+    void handleAltButtonPress();
+    void handleRecordButtonPress();
+    void handleSlideSwitch(int channel, int position);
+    void handleClockSwitch(int id);
+    void handleModSwitch(int id);
 };

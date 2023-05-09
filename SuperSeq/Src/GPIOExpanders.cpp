@@ -29,7 +29,7 @@ void gpio1_init(MCP23017 *gpio)
     // B6 = ENC2 A
     // B7 = ENC2 B
     gpio->setDirection(MCP23017_PORTB, 0b11111111); // 1 = input, 0 = output
-    gpio->setInterupt(MCP23017_PORTB, 0b11001111);  // 1 = interupt, 0 = not interupt
+    gpio->setInterupt(MCP23017_PORTB, 0b01000111);  // 1 = interupt, 0 = not interupt
     gpio->setPullUp(MCP23017_PORTB, 0xff);
 
     gpio->digitalReadAB();
@@ -93,7 +93,7 @@ void gpio3_init(MCP23017 *gpio)
     // B6 = ENC4_CHAN_A
     // B7 = ENC4_CHAN_B
     gpio->setDirection(MCP23017_PORTB, 0b11101010);
-    gpio->setInterupt(MCP23017_PORTB, 0b11101010);
+    gpio->setInterupt(MCP23017_PORTB, 0b01101010);
     gpio->setPullUp(MCP23017_PORTB, 0b11101010);
 
     gpio->setInputPolarity(MCP23017_PORTA, 0x00);
@@ -142,16 +142,83 @@ void handle_gpio_interrupt(MCP23017 *gpio) {
             switch (address)
             {
             case GPIO1_I2C_ADDRESS:
-                /* code */
+                gpio1_handler(i, pin_states);
                 break;
             case GPIO2_I2C_ADDRESS:
                 gpio2_handler(i, pin_states);
                 break;
             case GPIO3_I2C_ADDRESS:
-                /* code */
+                gpio3_handler(i, pin_states);
                 break;
             }
         }
+    }
+}
+
+void gpio1_handler(int pin, uint16_t pin_states)
+{
+    switch (pin)
+    {
+    case GPIO1::CS_B_UP:
+        
+        break;
+
+    case GPIO1::CS_B_DOWN:
+        
+        break;
+
+    case GPIO1::MS_B_UP:
+        
+        break;
+
+    case GPIO1::MS_B_DOWN:
+        
+        break;
+
+    case GPIO1::SW3_POS4:
+        controller.handleSlideSwitch(2, 4);
+        break;
+
+    case GPIO1::SW3_POS3:
+        controller.handleSlideSwitch(2, 3);
+        break;
+
+    case GPIO1::SW3_POS2:
+        controller.handleSlideSwitch(2, 2);
+        break;
+
+    case GPIO1::SW3_POS1:
+        controller.handleSlideSwitch(2, 1);
+        break;
+
+    case GPIO1::ENC4_BTN:
+        controller.handleEncoderPress(3);
+        break;
+
+    case GPIO1::ENC3_BTN:
+        controller.handleEncoderPress(2);
+        break;
+
+    case GPIO1::ENC3_A:
+        controller.handleEncoder(2, GPIO1::ENC3_A, pin_states);
+        break;
+
+    case GPIO1::ENC3_B:
+        break;
+
+    case GPIO1::B4:
+        break;
+
+    case GPIO1::B5:
+        break;
+
+    case GPIO1::ENC2_A:
+        controller.handleEncoder(1, GPIO1::ENC2_A, pin_states);
+        break;
+
+    case GPIO1::ENC2_B:
+        // do nothing...
+        break;
     }
 }
 
@@ -160,19 +227,19 @@ void gpio2_handler(int pin, uint16_t pin_states)
     switch (pin)
     {
     case GPIO2::SW1_POS1:
-        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::DEFAULT);
+        controller.handleSlideSwitch(0, 1);
         break;
 
     case GPIO2::SW1_POS2:
-        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::PINGPONG);
+        controller.handleSlideSwitch(0, 2);
         break;
 
     case GPIO2::SW1_POS3:
-        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::PEDAL);
+        controller.handleSlideSwitch(0, 3);
         break;
 
     case GPIO2::SW1_POS4:
-        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::TOUCH);
+        controller.handleSlideSwitch(0, 4);
         break;
 
     case GPIO2::CS_A_UP:
@@ -192,22 +259,27 @@ void gpio2_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO2::ENC2_BTN:
+        controller.handleEncoderPress(1);
         break;
 
     case GPIO2::SW2_POS1:
+        controller.handleSlideSwitch(1, 1);
         break;
 
     case GPIO2::SW2_POS2:
+        controller.handleSlideSwitch(1, 2);
         break;
 
     case GPIO2::SW2_POS3:
+        controller.handleSlideSwitch(1, 3);
         break;
 
     case GPIO2::SW2_POS4:
+        controller.handleSlideSwitch(1, 4);
         break;
 
     case GPIO2::ENC1_A:
-        controller.handleEncoder(0, pin_states);
+        controller.handleEncoder(0, GPIO2::ENC1_A, pin_states);
         break;
 
     case GPIO2::ENC1_B:
@@ -215,7 +287,72 @@ void gpio2_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO2::ENC1_BTN:
-        controller.channels[0]->syncRhythmWithMaster();
+        controller.handleEncoderPress(0);
+        break;
+    }
+}
+
+void gpio3_handler(int pin, uint16_t pin_states)
+{
+    switch (pin)
+    {
+    case GPIO3::MS_C_UP:
+        
+        break;
+
+    case GPIO3::MS_C_DOWN:
+        
+        break;
+
+    case GPIO3::CS_C_UP:
+        
+        break;
+
+    case GPIO3::CS_C_DOWN:
+        
+        break;
+
+    case GPIO3::SW4_POS4:
+        controller.handleSlideSwitch(3, 4);
+        break;
+
+    case GPIO3::SW4_POS3:
+        controller.handleSlideSwitch(3, 3);
+        break;
+
+    case GPIO3::SW4_POS2:
+        controller.handleSlideSwitch(3, 2);
+        break;
+
+    case GPIO3::SW4_POS1:
+        controller.handleSlideSwitch(3, 1);
+        break;
+
+    case GPIO3::RESET_LED:
+        break;
+
+    case GPIO3::RESET_BTN:
+        break;
+
+    case GPIO3::RUN_LED:
+        break;
+
+    case GPIO3::RUN_BTN:
+        controller.handleRecordButtonPress();
+        break;
+
+    case GPIO3::ALT_LED:
+        break;
+
+    case GPIO3::ALT_BTN:
+        controller.handleAltButtonPress();
+        break;
+
+    case GPIO3::ENC4_A:
+        controller.handleEncoder(3, GPIO3::ENC4_A, pin_states);
+        break;
+
+    case GPIO3::ENC4_B:
         break;
     }
 }
