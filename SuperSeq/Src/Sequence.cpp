@@ -148,6 +148,8 @@ void Sequence::advance() {
         activateStep(currStep, prevStep);
     }
 
+    trigOut.write(1);
+
     prevStep = currStep;
 
     if (direction == FORWARD)
@@ -208,8 +210,6 @@ void Sequence::activateStep(int curr, int prev) {
     mux.activateChannel(curr);
     setLED(prev, 0);
     setLED(curr, 127);
-
-    trigOut.write(1);
 }
 
 void Sequence::setLED(int step, int pwm)
