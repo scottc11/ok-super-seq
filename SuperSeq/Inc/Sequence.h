@@ -43,6 +43,7 @@ public:
     IS31FL3246 *leds;
     int led_pins[8];
 
+    bool playback;
     PlaybackMode pbMode;
     bool direction;
 
@@ -65,6 +66,8 @@ public:
     void syncRhythmWithMaster();
     void syncRhythmWithChannel(int divider, int mutiplier);
 
+    void start();
+    void stop();
     void advance();
     void reset();
 

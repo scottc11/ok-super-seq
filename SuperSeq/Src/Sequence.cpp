@@ -8,9 +8,11 @@ int CHANNEL_LED_PINS[4][8] = {
 };
 
 void Sequence::init() {
+    playback = true;
     clockDivider = 1;
     clockMultiplier = 1;
     updateStepLength();
+    playback = true;
 }
 
 void Sequence::setPlaybackMode(PlaybackMode mode) {
@@ -109,7 +111,9 @@ void Sequence::callback_ppqn() {
     trigOut.write(0); // always set the trig out back low 
 
     if (currPulse == 0) {
-        advance();
+        if (playback) {
+            advance();
+        }
     }
 
     if (currPulse < stepLength)
@@ -124,6 +128,14 @@ void Sequence::callback_ppqn() {
             queueStepLength = false;
         }
     }
+}
+
+void Sequence::start() {
+    playback = true;
+}
+
+void Sequence::stop() {
+    playback = false;
 }
 
 void Sequence::advance() {

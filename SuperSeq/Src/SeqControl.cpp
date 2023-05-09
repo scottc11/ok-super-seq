@@ -8,6 +8,8 @@ void SeqControl::init() {
     touch_pads->attachCallbackReleased(callback(this, &SeqControl::onRelease));
     touch_pads->enable();
 
+    setRunLED(1);
+
     ext_step_int.rise(callback(this, &SeqControl::ext_step_handler));
     ext_pulse_int.rise(callback(this, &SeqControl::ext_pulse_handler));
 
@@ -146,9 +148,20 @@ void SeqControl::handleAltButtonPress()
 
 }
 
-void SeqControl::handleRecordButtonPress()
+void SeqControl::handleRunButtonPress()
 {
-
+    running = !running;
+    for (int i = 0; i < NUM_CHANNELS; i++)
+    {
+        if (running)
+        {
+            setRunLED(0);
+            channels[i]->stop();
+        } else {
+            setRunLED(1);
+            channels[i]->start();
+        }
+    }
 }
 
 /**
@@ -181,4 +194,11 @@ void SeqControl::handleClockSwitch(int id)
 void SeqControl::handleModSwitch(int id)
 {
 
+}
+
+void SeqControl::setRunLED(bool state)
+{
+    int currState = gpio3.digitalRead(MCP23017_PORTB);
+    currState = bitwise_write_bit(currState, GPIO3::RUN_LED - 8, state);
+    gpio3.digitalWrite(MCP23017_PORTB, currState);
 }
