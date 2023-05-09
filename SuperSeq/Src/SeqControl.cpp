@@ -8,12 +8,21 @@ void SeqControl::init() {
     touch_pads->attachCallbackReleased(callback(this, &SeqControl::onRelease));
     touch_pads->enable();
 
-    int_ppqn_1.rise(callback(this, &SeqControl::ppqn1_handler));
+    ext_step_int.rise(callback(this, &SeqControl::ext_step_handler));
+    ext_pulse_int.rise(callback(this, &SeqControl::ext_pulse_handler));
 }
 
-void SeqControl::ppqn1_handler() {
+void SeqControl::ext_step_handler() {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    uint8_t isr_id = ISR_ID_PPQN_1;
+    uint8_t isr_id = ISR_ID_EXT_STEP;
+    xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void SeqControl::ext_pulse_handler()
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint8_t isr_id = ISR_ID_EXT_PULSE;
     xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }

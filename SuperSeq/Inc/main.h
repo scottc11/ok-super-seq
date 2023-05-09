@@ -5,6 +5,8 @@
 
 #define NUM_CHANNELS 4
 
+#define PPQN 96
+
 #define I2C3_SDA PC_9
 #define I2C3_SCL PA_8
 
@@ -15,6 +17,10 @@
 #define GPIO3_INT PA_2
 
 #define EXT_PPQN_1 PC_10
+#define EXT_PPQN_96 PC_11
+#define EXT_RESET PC_15
+
+#define MASTER_CLOCK_IN PA_3
 
 #define CLOCK_OUT_1 PB_10
 #define CLOCK_OUT_2 PB_12
@@ -37,8 +43,12 @@
 #define MUX_4_B PB_14
 #define MUX_4_C PB_13
 
-#define ISR_ID_GPIO1 11
-#define ISR_ID_GPIO2 12
-#define ISR_ID_GPIO3 13
-#define ISR_ID_PPQN_1 14
-#define ISR_ID_TOUCH 15
+enum ISR_ID
+{
+    ISR_ID_GPIO1,
+    ISR_ID_GPIO2,
+    ISR_ID_GPIO3,
+    ISR_ID_EXT_STEP,
+    ISR_ID_EXT_PULSE,
+    ISR_ID_TOUCH
+};

@@ -36,8 +36,14 @@ void task_interrupt_handler(void *params)
             controller->gpio_handler(3, controller->gpio2->digitalReadAB());
             break;
         
-        case ISR_ID_PPQN_1:
-            controller->advanceAll();
+        case ISR_ID_EXT_STEP:
+            // controller->advanceAll();
+            break;
+        case ISR_ID_EXT_PULSE:
+            for (int i = 0; i < NUM_CHANNELS; i++)
+            {
+                controller->channels[i]->callback_ppqn();
+            }
             break;
         default:
             break;

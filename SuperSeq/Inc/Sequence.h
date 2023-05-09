@@ -47,6 +47,7 @@ public:
     bool direction;
     uint8_t length;
 
+    int currPulse;
     int currStep;
     int prevStep;
     int currTouchedStep;
@@ -58,6 +59,8 @@ public:
     void setDirection(Direction _direction);
 
     void advance();
+    void callback_ppqn();
+
     void handleTouchedStep(int step);
     void handleReleasedStep(int step);
 

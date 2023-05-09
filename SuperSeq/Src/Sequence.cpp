@@ -31,6 +31,19 @@ void Sequence::setDirection(Direction _direction) {
     direction = _direction;
 }
 
+void Sequence::callback_ppqn() {
+    if (currPulse == 0) {
+        advance();
+    }
+
+    if (currPulse < PPQN - 1) {
+        currPulse++;
+    } else {
+        currPulse = 0;
+    }
+    
+}
+
 void Sequence::advance() {
     prevStep = currStep;
 

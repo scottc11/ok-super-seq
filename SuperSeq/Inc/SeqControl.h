@@ -11,7 +11,13 @@ static const int TOUCH_PAD_MAP[12] = {7, 6, 5, 4, 3, 2, 1, 0, 3, 2, 1, 0};
 class SeqControl
 {
 public:
-    SeqControl(MPR121 *tp_ptr, MCP23017 *gpio2_ptr, Sequence *seq1_ptr, Sequence *seq2_ptr, Sequence *seq3_ptr, Sequence *seq4_ptr) : int_ppqn_1(EXT_PPQN_1, PinMode::PullUp)
+    SeqControl(
+        MPR121 *tp_ptr,
+        MCP23017 *gpio2_ptr,
+        Sequence *seq1_ptr,
+        Sequence *seq2_ptr,
+        Sequence *seq3_ptr,
+        Sequence *seq4_ptr) : ext_step_int(EXT_PPQN_1, PinMode::PullUp), ext_pulse_int(EXT_PPQN_96, PinMode::PullUp)
     {
         touch_pads = tp_ptr;
         channels[0] = seq1_ptr;
@@ -21,7 +27,8 @@ public:
         gpio2 = gpio2_ptr;
     }
 
-    InterruptIn int_ppqn_1;
+    InterruptIn ext_step_int;
+    InterruptIn ext_pulse_int;
     MPR121 *touch_pads;
     MCP23017 *gpio1;
     MCP23017 *gpio2;
@@ -29,7 +36,8 @@ public:
     Sequence *channels[4];
 
     void init();
-    void ppqn1_handler();
+    void ext_step_handler();
+    void ext_pulse_handler();
     void advanceAll();
 
     void gpio_handler(int id, uint16_t state) __attribute__((optimize("O0")));
