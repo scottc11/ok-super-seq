@@ -332,6 +332,7 @@ void gpio3_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO3::RESET_BTN:
+        controller.handleResetButtonPress();
         break;
 
     case GPIO3::RUN_LED:

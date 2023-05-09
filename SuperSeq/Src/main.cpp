@@ -52,6 +52,8 @@ void task_main(void *pvParameters)
     gpio2_init(&gpio2);
     gpio3_init(&gpio3);
 
+    HAL_Delay(10);
+
     controller.init();
 
     while (1)

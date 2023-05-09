@@ -10,6 +10,7 @@ int CHANNEL_LED_PINS[4][8] = {
 void Sequence::init() {
     clockDivider = 1;
     clockMultiplier = 1;
+    updateStepLength();
 }
 
 void Sequence::setPlaybackMode(PlaybackMode mode) {
@@ -126,6 +127,15 @@ void Sequence::callback_ppqn() {
 }
 
 void Sequence::advance() {
+    
+    if (override == false)
+    {
+        if (currStep == 0 && prevStep == 0) {
+            prevStep = length - 1;
+        }
+        activateStep(currStep, prevStep);
+    }
+
     prevStep = currStep;
 
     if (direction == FORWARD)
@@ -158,33 +168,21 @@ void Sequence::advance() {
             currStep--;
         }
     }
+}
 
-    if (override == false) {
-        activateStep(currStep, prevStep);
-    }
+void Sequence::reset() {
+    currPulse = 0;
+    prevStep = currStep;
+    currStep = 0;
+    clearLEDs();
 }
 
 void Sequence::handleTouchedStep(int step)
 {
-    // compare the currTouched and prevTouched from MPR121
-    // if 
-    // for each touched pad add to touched array
-    
-
     prevTouchedStep = currTouchedStep;
     currTouchedStep = step;
-
-    if (currTouchedStep != currStep) {
-        activateStep(currTouchedStep, currStep);
-    } else {
-        // trigger clock out?
-    }
-    
-    if (currTouchedStep != prevTouchedStep)
-    {
-        setLED(prevTouchedStep, 0);
-    }
-    
+    clearLEDs();
+    activateStep(currTouchedStep, currStep);
 }
 
 void Sequence::handleReleasedStep(int step)
@@ -195,11 +193,9 @@ void Sequence::handleReleasedStep(int step)
 }
 
 void Sequence::activateStep(int curr, int prev) {
-    if (curr != prev) {
-        mux.activateChannel(curr);
-        setLED(curr, 127);
-        setLED(prev, 0);
-    }
+    mux.activateChannel(curr);
+    setLED(prev, 0);
+    setLED(curr, 127);
 
     trigOut.write(1);
 }
@@ -207,4 +203,12 @@ void Sequence::activateStep(int curr, int prev) {
 void Sequence::setLED(int step, int pwm)
 {
     leds->setChannelPWM(CHANNEL_LED_PINS[index][step], pwm);
+}
+
+void Sequence::clearLEDs() {
+    for (int i = 0; i < 8; i++)
+    {
+        setLED(i, 0);
+    }
+    
 }

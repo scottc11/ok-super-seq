@@ -45,13 +45,13 @@ public:
 
     PlaybackMode pbMode;
     bool direction;
-    uint8_t length;
 
     int clockDivider;
     int clockMultiplier;
     int currPulse;
     int currStep;
     int prevStep;
+    uint8_t length;      // how long the sequence is in steps (max 8, min 1)
     uint16_t stepLength; // how many pulses to a step (zero-indexed!)
     bool queueStepLength;
     int currTouchedStep;
@@ -66,6 +66,8 @@ public:
     void syncRhythmWithChannel(int divider, int mutiplier);
 
     void advance();
+    void reset();
+
     uint16_t calculateStepLength();
     void updateStepLength();
     void callback_ppqn();
@@ -76,4 +78,5 @@ public:
     void activateStep(int curr, int prev);
 
     void setLED(int step, int pwm);
+    void clearLEDs();
 };

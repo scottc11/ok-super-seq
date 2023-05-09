@@ -43,6 +43,7 @@ public:
     void handleEncoderPress(int channel);
     void handleAltButtonPress();
     void handleRecordButtonPress();
+    void handleResetButtonPress();
     void handleSlideSwitch(int channel, int position);
     void handleClockSwitch(int id);
     void handleModSwitch(int id);

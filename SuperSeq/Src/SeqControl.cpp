@@ -152,6 +152,18 @@ void SeqControl::handleRecordButtonPress()
 }
 
 /**
+ * @brief Reset all sequences
+ * 
+ */
+void SeqControl::handleResetButtonPress()
+{
+    for (int i = 0; i < NUM_CHANNELS; i++)
+    {
+        channels[i]->reset();
+    }
+}
+
+/**
  * @brief 
  * 
  * @param id 1, 2, or 3 == A, B, C
