@@ -33,12 +33,29 @@ void Sequence::setDirection(Direction _direction) {
 }
 
 void Sequence::setClockDivider(int value) {
-    if (clockDivider + value <= 0) {
-        clockDivider = 1;
+    // if value negative and divider > 1, subtract 1 from divider, and don't touch multiplier
+    if (value < 0 && clockDivider > 1) {
+        clockDivider -= 1;
     }
-    else if (clockDivider + value <= 16)
+    // if value negative and divider == 1, add 1 to multiplier, and don't touch divider
+    else if (value < 0 && clockDivider == 1)
     {
-        clockDivider = clockDivider + value;
+        clockMultiplier += 1;
+        if (clockMultiplier > 16)
+        {
+            clockMultiplier = 16;
+        }
+    }
+    // if value positive and multiplier > 1, subtract 1 from multiplier, don't touch divider
+    else if (value > 0 && clockMultiplier > 1) {
+        clockMultiplier -= 1;
+    }
+    // if value positive and multiplier == 1, add 1 to devidier and don't touch multiplier
+    else if (value > 0 && clockMultiplier == 1) {
+        clockDivider += 1;
+        if (clockDivider > 16) {
+            clockDivider = 16;
+        }
     }
 }
 
@@ -49,7 +66,7 @@ void Sequence::callback_ppqn() {
         advance();
     }
 
-    if (currPulse < (PPQN * clockDivider) - 1)
+    if (currPulse < ((PPQN * clockDivider) / clockMultiplier) - 1)
     {
         currPulse++;
     }
