@@ -22,18 +22,15 @@ void task_interrupt_handler(void *params)
             break;
 
         case ISR_ID_GPIO1:
-            logger_log("\n### Toggle Switch ISR ###\n");
-            controller->gpio_handler(1, controller->gpio2->digitalReadAB());
+            handle_gpio_interrupt(&gpio1);
             break;
         
         case ISR_ID_GPIO2:
-            logger_log("\n### Tactile Buttons ISR ###\n");
-            controller->gpio_handler(2, controller->gpio2->digitalReadAB());
+            handle_gpio_interrupt(&gpio2);
             break;
         
         case ISR_ID_GPIO3:
-            logger_log("\n### Touch Pads ISR ###\n");
-            controller->gpio_handler(3, controller->gpio2->digitalReadAB());
+            handle_gpio_interrupt(&gpio3);
             break;
         
         case ISR_ID_EXT_STEP:

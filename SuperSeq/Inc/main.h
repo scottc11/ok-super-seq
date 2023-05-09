@@ -10,6 +10,10 @@
 #define I2C3_SDA PC_9
 #define I2C3_SCL PA_8
 
+#define GPIO1_I2C_ADDRESS 0x20
+#define GPIO2_I2C_ADDRESS 0x24
+#define GPIO3_I2C_ADDRESS 0x22
+
 #define TOUCH_INT PC_12
 
 #define GPIO1_INT PA_0

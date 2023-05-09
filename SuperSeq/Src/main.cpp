@@ -34,7 +34,7 @@ Sequence seq2(1, &led_driver, CLOCK_OUT_2, MUX_2_A, MUX_2_B, MUX_2_C);
 Sequence seq3(2, &led_driver, CLOCK_OUT_3, MUX_3_A, MUX_3_B, MUX_3_C);
 Sequence seq4(3, &led_driver, CLOCK_OUT_4, MUX_4_A, MUX_4_B, MUX_4_C);
 
-SeqControl controller(&touch_pads, &gpio2, &seq1, &seq2, &seq3, &seq4);
+SeqControl controller(&touch_pads, &seq1, &seq2, &seq3, &seq4);
 
 void task_main(void *pvParameters)
 {

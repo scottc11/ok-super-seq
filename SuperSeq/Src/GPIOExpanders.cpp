@@ -125,3 +125,97 @@ void int_callback_gpio3()
     xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
+
+/**
+ * @brief take a GPIO instance and funnel it to the correct handler
+ * 
+ * @param gpio 
+ */
+void handle_gpio_interrupt(MCP23017 *gpio) {
+    uint16_t pin_states = gpio->digitalReadAB();
+    uint8_t address = gpio->address >> 1;
+    for (int i = 0; i < 16; i++)
+    {
+        bool is_low = bitwise_read_bit(pin_states, i);
+        if (is_low == false)
+        {
+            switch (address)
+            {
+            case GPIO1_I2C_ADDRESS:
+                /* code */
+                break;
+            case GPIO2_I2C_ADDRESS:
+                gpio2_handler(i, pin_states);
+                break;
+            case GPIO3_I2C_ADDRESS:
+                /* code */
+                break;
+            }
+        }
+    }
+}
+
+void gpio2_handler(int pin, uint16_t pin_states)
+{
+    switch (pin)
+    {
+    case GPIO2::SW1_POS1:
+        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::DEFAULT);
+        break;
+
+    case GPIO2::SW1_POS2:
+        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::PINGPONG);
+        break;
+
+    case GPIO2::SW1_POS3:
+        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::PEDAL);
+        break;
+
+    case GPIO2::SW1_POS4:
+        controller.channels[0]->setPlaybackMode(Sequence::PlaybackMode::TOUCH);
+        break;
+
+    case GPIO2::CS_A_UP:
+        // channel 1 adds its clock to channel 0
+        break;
+
+    case GPIO2::CS_A_DOWN:
+        // channel 0 adds its clock to channel 1
+        break;
+
+    case GPIO2::MS_A_UP:
+        // channel 1 mods channel 0
+        break;
+
+    case GPIO2::MS_A_DOWN:
+        // channel 0 mods channel 1
+        break;
+
+    case GPIO2::ENC2_BTN:
+        break;
+
+    case GPIO2::SW2_POS1:
+        break;
+
+    case GPIO2::SW2_POS2:
+        break;
+
+    case GPIO2::SW2_POS3:
+        break;
+
+    case GPIO2::SW2_POS4:
+        break;
+
+    case GPIO2::ENC1_A:
+        controller.handleEncoder(0, pin_states);
+        break;
+
+    case GPIO2::ENC1_B:
+        // do nothing...
+        break;
+
+    case GPIO2::ENC1_BTN:
+        controller.channels[0]->syncRhythmWithMaster();
+        break;
+    }
+}

@@ -13,7 +13,6 @@ class SeqControl
 public:
     SeqControl(
         MPR121 *tp_ptr,
-        MCP23017 *gpio2_ptr,
         Sequence *seq1_ptr,
         Sequence *seq2_ptr,
         Sequence *seq3_ptr,
@@ -24,25 +23,17 @@ public:
         channels[1] = seq2_ptr;
         channels[2] = seq3_ptr;
         channels[3] = seq4_ptr;
-        gpio2 = gpio2_ptr;
     }
 
     InterruptIn ext_step_int;
     InterruptIn ext_pulse_int;
     MPR121 *touch_pads;
-    MCP23017 *gpio1;
-    MCP23017 *gpio2;
-    MCP23017 *gpio3;
     Sequence *channels[4];
 
     void init();
     void ext_step_handler();
     void ext_pulse_handler();
     void advanceAll();
-
-    void gpio_handler(int id, uint16_t pin_states) __attribute__((optimize("O0")));
-
-    void handleGPIO2(uint8_t pin, uint16_t pin_states) __attribute__((optimize("O0")));
 
     void handleTouchInterrupt();
     void onTouch(uint8_t pad);
@@ -67,26 +58,6 @@ enum GPIO1
     B5,
     ENC2_A,
     ENC2_B,
-};
-
-enum GPIO2
-{
-    SW1_POS1,
-    SW1_POS2,
-    SW1_POS3,
-    SW1_POS4,
-    CS_A_UP,
-    CS_A_DOWN,
-    MS_A_UP,
-    MS_A_DOWN,
-    ENC2_BTN,
-    SW2_POS1,
-    SW2_POS2,
-    SW2_POS3,
-    SW2_POS4,
-    ENC1_A,
-    ENC1_B,
-    ENC1_BTN
 };
 
 enum GPIO3
