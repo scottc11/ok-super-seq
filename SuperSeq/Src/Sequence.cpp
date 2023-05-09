@@ -32,6 +32,8 @@ void Sequence::setDirection(Direction _direction) {
 }
 
 void Sequence::callback_ppqn() {
+    trigOut.write(0); // always set the trig out back low 
+
     if (currPulse == 0) {
         advance();
     }
