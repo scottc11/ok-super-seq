@@ -59,7 +59,9 @@ public:
     void init();
     void setPlaybackMode(PlaybackMode mode);
     void setDirection(Direction _direction);
-    void setClockDivider(int value);
+    void setRhythm(int value);
+    void syncRhythmWithMaster();
+    void syncRhythmWithChannel(int divider, int mutiplier);
 
     void advance();
     void callback_ppqn();

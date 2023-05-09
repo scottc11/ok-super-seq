@@ -32,7 +32,18 @@ void Sequence::setDirection(Direction _direction) {
     direction = _direction;
 }
 
-void Sequence::setClockDivider(int value) {
+void Sequence::syncRhythmWithMaster()
+{
+    clockDivider = 1;
+    clockMultiplier = 1;
+}
+void Sequence::syncRhythmWithChannel(int divider, int multiplier)
+{
+    clockDivider = divider;
+    clockMultiplier = multiplier;
+}
+
+void Sequence::setRhythm(int value) {
     // if value negative and divider > 1, subtract 1 from divider, and don't touch multiplier
     if (value < 0 && clockDivider > 1) {
         clockDivider -= 1;

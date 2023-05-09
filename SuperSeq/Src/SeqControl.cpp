@@ -174,6 +174,7 @@ void SeqControl::handleGPIO2(uint8_t pin, uint16_t pin_states)
         break;
 
     case GPIO2::ENC1_BTN:
+        channels[0]->syncRhythmWithMaster();
         break;
     }
     return;
@@ -186,11 +187,11 @@ void SeqControl::handleEncoder(int channel, uint16_t pin_states) {
     if (enc_chan_a_state == 0 && enc_chan_b_state == 1)
     {
         // direction right
-        channels[channel]->setClockDivider(-1);
+        channels[channel]->setRhythm(-1);
     }
     else if (enc_chan_a_state == 0 && enc_chan_b_state == 0)
     {
         // direction left
-        channels[channel]->setClockDivider(1);
+        channels[channel]->setRhythm(1);
     }
 }
