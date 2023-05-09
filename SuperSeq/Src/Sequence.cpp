@@ -36,18 +36,26 @@ void Sequence::syncRhythmWithMaster()
 {
     clockDivider = 1;
     clockMultiplier = 1;
+    updateStepLength();
 }
 void Sequence::syncRhythmWithChannel(int divider, int multiplier)
 {
     clockDivider = divider;
     clockMultiplier = multiplier;
+    updateStepLength();
 }
 
+// make an "END OF STEP" event to add to the queue
+// this will take 
+
 void Sequence::setRhythm(int value) {
+
+
     // if value negative and divider > 1, subtract 1 from divider, and don't touch multiplier
     if (value < 0 && clockDivider > 1) {
         clockDivider -= 1;
     }
+
     // if value negative and divider == 1, add 1 to multiplier, and don't touch divider
     else if (value < 0 && clockDivider == 1)
     {
@@ -57,16 +65,42 @@ void Sequence::setRhythm(int value) {
             clockMultiplier = 16;
         }
     }
+
     // if value positive and multiplier > 1, subtract 1 from multiplier, don't touch divider
     else if (value > 0 && clockMultiplier > 1) {
         clockMultiplier -= 1;
     }
+
     // if value positive and multiplier == 1, add 1 to devidier and don't touch multiplier
     else if (value > 0 && clockMultiplier == 1) {
         clockDivider += 1;
         if (clockDivider > 16) {
             clockDivider = 16;
         }
+    }
+
+    updateStepLength();
+}
+
+uint16_t Sequence::calculateStepLength()
+{
+    return ((PPQN * clockDivider) / clockMultiplier) - 1;
+}
+
+/**
+ * @brief either imedieatly updates the stepLength, or queues an update for
+ * when the next step overflow event occurs
+ * 
+ */
+void Sequence::updateStepLength()
+{
+    if (currPulse > calculateStepLength())
+    {
+        queueStepLength = true;
+    }
+    else
+    {
+        stepLength = calculateStepLength();
     }
 }
 
@@ -77,13 +111,17 @@ void Sequence::callback_ppqn() {
         advance();
     }
 
-    if (currPulse < ((PPQN * clockDivider) / clockMultiplier) - 1)
+    if (currPulse < stepLength)
     {
         currPulse++;
     }
     else
     {
         currPulse = 0;
+        if (queueStepLength) {
+            stepLength = calculateStepLength();
+            queueStepLength = false;
+        }
     }
 }
 

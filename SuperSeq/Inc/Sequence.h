@@ -52,6 +52,8 @@ public:
     int currPulse;
     int currStep;
     int prevStep;
+    uint16_t stepLength; // how many pulses to a step (zero-indexed!)
+    bool queueStepLength;
     int currTouchedStep;
     int prevTouchedStep;
     bool override;
@@ -64,6 +66,8 @@ public:
     void syncRhythmWithChannel(int divider, int mutiplier);
 
     void advance();
+    uint16_t calculateStepLength();
+    void updateStepLength();
     void callback_ppqn();
 
     void handleTouchedStep(int step);
