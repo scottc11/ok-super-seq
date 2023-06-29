@@ -108,7 +108,7 @@ void Sequence::updateStepLength()
 }
 
 void Sequence::callback_ppqn() {
-    trigOut.write(0); // always set the trig out back low 
+    clockOut.write(0); // always set the trig out back low 
 
     if (currPulse == 0) {
         if (playback) {
@@ -148,7 +148,7 @@ void Sequence::advance() {
         activateStep(currStep, prevStep);
     }
 
-    trigOut.write(1);
+    clockOut.write(1);
 
     prevStep = currStep;
 
@@ -197,12 +197,17 @@ void Sequence::handleTouchedStep(int step)
     currTouchedStep = step;
     clearLEDs();
     activateStep(currTouchedStep, currStep);
+    if (!playback) {
+        clockOut.write(1);
+    }
+    
 }
 
 void Sequence::handleReleasedStep(int step)
 {
-    if (step != currStep) {
-        activateStep(currStep, currTouchedStep);
+    activateStep(currStep, currTouchedStep);
+    if (!playback) {
+        clockOut.write(0);
     }
 }
 

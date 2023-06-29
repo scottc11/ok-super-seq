@@ -20,11 +20,14 @@
 #define GPIO2_INT PA_1
 #define GPIO3_INT PA_2
 
-#define EXT_PPQN_1 PC_10
-#define EXT_PPQN_96 PC_11
+#define TP_PPQN_1 PC_10
+#define TP_PPQN_96 PC_11
+#define TP_RESET PB_9
+
 #define EXT_RESET PC_15
 
 #define MASTER_CLOCK_IN PA_3
+#define MASTER_CLOCK_OUT PA_9
 
 #define CLOCK_OUT_1 PB_10
 #define CLOCK_OUT_2 PB_12
@@ -52,7 +55,8 @@ enum ISR_ID
     ISR_ID_GPIO1,
     ISR_ID_GPIO2,
     ISR_ID_GPIO3,
-    ISR_ID_EXT_STEP,
-    ISR_ID_EXT_PULSE,
+    ISR_ID_TP_STEP,
+    ISR_ID_TP_PULSE,
+    ISR_ID_TP_RESET,
     ISR_ID_TOUCH
 };

@@ -17,26 +17,37 @@ public:
         Sequence *seq1_ptr,
         Sequence *seq2_ptr,
         Sequence *seq3_ptr,
-        Sequence *seq4_ptr) : ext_step_int(EXT_PPQN_1, PinMode::PullUp), ext_pulse_int(EXT_PPQN_96, PinMode::PullUp)
+        Sequence *seq4_ptr) : ext_step_int(TP_PPQN_1, PinMode::PullUp), ext_pulse_int(TP_PPQN_96, PinMode::PullUp), tp_reset_int(TP_RESET, PinMode::PullUp, masterClockOut(MASTER_CLOCK_OUT))
     {
         touch_pads = tp_ptr;
         channels[0] = seq1_ptr;
         channels[1] = seq2_ptr;
         channels[2] = seq3_ptr;
         channels[3] = seq4_ptr;
-        running = false;
+        globalPlayback = false;
     }
 
     InterruptIn ext_step_int;
     InterruptIn ext_pulse_int;
+    InterruptIn tp_reset_int;
+
+    DigitalOut masterClockOut;
+
     MPR121 *touch_pads;
     Sequence *channels[4];
+    
 
-    bool running;
+    bool globalPlayback;
+
+    int pulse;
+    int step;
 
     void init();
-    void ext_step_handler();
-    void ext_pulse_handler();
+    
+    void tpStepHandler();
+    void tpPulseHandler();
+    void tpResetHandler();
+    
     void advanceAll();
 
     void setRunLED(bool state);

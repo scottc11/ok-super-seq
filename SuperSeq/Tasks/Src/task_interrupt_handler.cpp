@@ -33,14 +33,17 @@ void task_interrupt_handler(void *params)
             handle_gpio_interrupt(&gpio3);
             break;
         
-        case ISR_ID_EXT_STEP:
-            // controller->advanceAll();
+        case ISR_ID_TP_STEP:
             break;
-        case ISR_ID_EXT_PULSE:
+        case ISR_ID_TP_PULSE:
             for (int i = 0; i < NUM_CHANNELS; i++)
             {
-                controller->channels[i]->callback_ppqn();
+                // move this into a controller function so controller is what syncs everything
+                controller->advanceAll();
             }
+            break;
+        case ISR_ID_TP_RESET:
+            controller->handleResetButtonPress();
             break;
         default:
             break;

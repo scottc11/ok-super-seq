@@ -8,10 +8,11 @@ void SeqControl::init() {
     touch_pads->attachCallbackReleased(callback(this, &SeqControl::onRelease));
     touch_pads->enable();
 
-    setRunLED(1);
+    setRunLED(0);
 
-    ext_step_int.rise(callback(this, &SeqControl::ext_step_handler));
-    ext_pulse_int.rise(callback(this, &SeqControl::ext_pulse_handler));
+    ext_step_int.rise(callback(this, &SeqControl::tpStepHandler));
+    ext_pulse_int.rise(callback(this, &SeqControl::tpPulseHandler));
+    tp_reset_int.rise(callback(this, &SeqControl::tpResetHandler));
 
     for (int i = 0; i < NUM_CHANNELS; i++)
     {
@@ -19,25 +20,43 @@ void SeqControl::init() {
     }
 }
 
-void SeqControl::ext_step_handler() {
+void SeqControl::tpStepHandler() {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    uint8_t isr_id = ISR_ID_EXT_STEP;
+    uint8_t isr_id = ISR_ID_TP_STEP;
     xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-void SeqControl::ext_pulse_handler()
+void SeqControl::tpPulseHandler()
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    uint8_t isr_id = ISR_ID_EXT_PULSE;
+    uint8_t isr_id = ISR_ID_TP_PULSE;
+    xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void SeqControl::tpResetHandler() {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    uint8_t isr_id = ISR_ID_TP_RESET;
     xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 void SeqControl::advanceAll() {
+    if (pulse == 0) {
+        masterClockOut.write(1);
+    }
+    if (pulse == 12) {
+        masterClockOut.write(0);
+    }
+    if (pulse < PPQN) {
+        pulse++;
+    } else {
+        pulse = 0;
+    }
     for (int i = 0; i < 4; i++)
     {
-        channels[i]->advance();
+        channels[i]->callback_ppqn();
     }
     
 }
@@ -58,7 +77,18 @@ void SeqControl::onTouch(uint8_t pad)
         int step = TOUCH_PAD_MAP[pad];
         for (int i = 0; i < NUM_CHANNELS; i++)
         {
-            // prevent seq.advance from advancing anything
+
+            // set a flag which tells the encoders to only temprarily increase/decrease the tempo, so that
+            // on release, the clock dividers get set back to what they were prior to the touch
+
+            // when globalPlayback == false:
+            // don't let touch snap back to the currStep
+            // trigger clock outs
+
+            // when channel touch pad is touched, these touch pads only effect that channel
+
+            // touch-release needs to snap back to the most recently touched pad (thatis still touched)
+
             channels[i]->override = true;
             channels[i]->handleTouchedStep(step);
         }
@@ -150,15 +180,15 @@ void SeqControl::handleAltButtonPress()
 
 void SeqControl::handleRunButtonPress()
 {
-    running = !running;
+    globalPlayback = !globalPlayback;
     for (int i = 0; i < NUM_CHANNELS; i++)
     {
-        if (running)
+        if (globalPlayback)
         {
-            setRunLED(0);
+            setRunLED(1);
             channels[i]->stop();
         } else {
-            setRunLED(1);
+            setRunLED(0);
             channels[i]->start();
         }
     }

@@ -27,7 +27,7 @@ public:
         PinName trig_pin,
         PinName mux_sel_a,
         PinName mux_sel_b,
-        PinName mux_sel_c) : mux(mux_sel_a, mux_sel_b, mux_sel_c), trigOut(trig_pin)
+        PinName mux_sel_c) : mux(mux_sel_a, mux_sel_b, mux_sel_c), clockOut(trig_pin)
     {
         leds = leds_ptr;
         index = _index;
@@ -38,7 +38,7 @@ public:
     }
 
     int index;
-    DigitalOut trigOut;
+    DigitalOut clockOut;
     CD4051 mux;
     IS31FL3246 *leds;
     int led_pins[8];
