@@ -17,7 +17,7 @@ public:
         Sequence *seq1_ptr,
         Sequence *seq2_ptr,
         Sequence *seq3_ptr,
-        Sequence *seq4_ptr) : ext_step_int(TP_PPQN_1, PinMode::PullUp), ext_pulse_int(TP_PPQN_96, PinMode::PullUp), tp_reset_int(TP_RESET, PinMode::PullUp, masterClockOut(MASTER_CLOCK_OUT))
+        Sequence *seq4_ptr) : ext_step_int(TP_PPQN_1, PinMode::PullUp), ext_pulse_int(TP_PPQN_96, PinMode::PullUp), tp_reset_int(TP_RESET, PinMode::PullUp), masterClockOut(MASTER_CLOCK_OUT)
     {
         touch_pads = tp_ptr;
         channels[0] = seq1_ptr;
@@ -41,6 +41,7 @@ public:
 
     int pulse;
     int step;
+    bool waitForClock;
 
     void init();
     

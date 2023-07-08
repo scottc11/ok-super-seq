@@ -75,6 +75,9 @@ public:
     void updateStepLength();
     void callback_ppqn();
 
+    void handleDefaultMode();
+    void handlePingPongMode();
+
     void handleTouchedStep(int step);
     void handleReleasedStep(int step);
 

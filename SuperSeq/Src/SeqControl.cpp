@@ -53,12 +53,14 @@ void SeqControl::advanceAll() {
         pulse++;
     } else {
         pulse = 0;
+        
     }
-    for (int i = 0; i < 4; i++)
-    {
-        channels[i]->callback_ppqn();
+    if (!waitForClock) {
+        for (int i = 0; i < 4; i++)
+        {
+            channels[i]->callback_ppqn();
+        }
     }
-    
 }
 
 void SeqControl::handleTouchInterrupt()
@@ -145,7 +147,7 @@ void SeqControl::handleEncoder(int channel, int bit_position, uint16_t pin_state
 
 void SeqControl::handleEncoderPress(int channel)
 {
-    controller.channels[channel]->syncRhythmWithMaster();
+    channels[channel]->syncRhythmWithMaster();
 }
 
 /**

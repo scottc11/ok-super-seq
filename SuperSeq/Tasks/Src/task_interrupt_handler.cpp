@@ -34,13 +34,18 @@ void task_interrupt_handler(void *params)
             break;
         
         case ISR_ID_TP_STEP:
+            // the clock should wait for this qarternote to trigger
+            // so set a bool on controller which gets cleared the very next pulse
+            // when pulse > PPQN - 1, stop the sequence. 
+            // if (controller->pulse <= PPQN - 1) {
+            //     while (controller->pulse != 0) {
+            //         controller->advanceAll();
+            //     }
+            // }
+            // controller->waitForClock = false;
             break;
         case ISR_ID_TP_PULSE:
-            for (int i = 0; i < NUM_CHANNELS; i++)
-            {
-                // move this into a controller function so controller is what syncs everything
-                controller->advanceAll();
-            }
+            controller->advanceAll();
             break;
         case ISR_ID_TP_RESET:
             controller->handleResetButtonPress();

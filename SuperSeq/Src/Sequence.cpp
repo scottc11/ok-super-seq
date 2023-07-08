@@ -20,9 +20,9 @@ void Sequence::setPlaybackMode(PlaybackMode mode) {
     switch (pbMode)
     {
     case PlaybackMode::DEFAULT:
-        direction = FORWARD;
         break;
     case PlaybackMode::PINGPONG:
+        direction = FORWARD;
         break;
     case PlaybackMode::PEDAL:
         break;
@@ -152,6 +152,39 @@ void Sequence::advance() {
 
     prevStep = currStep;
 
+    switch (pbMode)
+    {
+    case PlaybackMode::DEFAULT:
+        handleDefaultMode();
+        break;
+    case PlaybackMode::PINGPONG:
+        handlePingPongMode();
+        break;
+    case PlaybackMode::PEDAL:
+        /* code */
+        break;
+    case PlaybackMode::TOUCH:
+        /* code */
+        break;
+    }
+}
+
+void Sequence::reset() {
+    currPulse = 0;
+    prevStep = currStep;
+    currStep = 0;
+    clearLEDs();
+}
+
+void Sequence::handleDefaultMode() {
+    if (currStep >= length - 1) {
+        currStep = 0;
+    } else {
+        currStep++;
+    }
+}
+
+void Sequence::handlePingPongMode() {
     if (direction == FORWARD)
     {
         if (currStep == (length - 1))
@@ -159,7 +192,9 @@ void Sequence::advance() {
             if (pbMode == PlaybackMode::PINGPONG)
             {
                 direction = !direction;
-            } else {
+            }
+            else
+            {
                 currStep = 0;
             }
         }
@@ -170,25 +205,23 @@ void Sequence::advance() {
     }
     else
     {
-        if (currStep == 0) {
-            
+        if (currStep == 0)
+        {
+
             if (pbMode == PlaybackMode::PINGPONG)
             {
                 direction = !direction;
-            } else {
+            }
+            else
+            {
                 currStep = length - 1;
             }
-        } else {
+        }
+        else
+        {
             currStep--;
         }
     }
-}
-
-void Sequence::reset() {
-    currPulse = 0;
-    prevStep = currStep;
-    currStep = 0;
-    clearLEDs();
 }
 
 void Sequence::handleTouchedStep(int step)
