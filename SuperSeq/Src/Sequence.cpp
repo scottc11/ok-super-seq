@@ -1,5 +1,7 @@
 #include "Sequence.h"
 
+const int PEDAL_PROGRESSION[16] = { 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 6 };
+
 int CHANNEL_LED_PINS[4][8] = {
     {15, 16, 17, 18, 19, 20, 21, 22},
     {11, 12, 13, 14, 23, 24, 25, 26},
@@ -25,6 +27,9 @@ void Sequence::setPlaybackMode(PlaybackMode mode) {
         direction = FORWARD;
         break;
     case PlaybackMode::PEDAL:
+        // an array of 16
+        currPedalStep = 0;
+        prevPedalStep = 0;
         break;
     case PlaybackMode::TOUCH:
         break;
@@ -161,7 +166,7 @@ void Sequence::advance() {
         handlePingPongMode();
         break;
     case PlaybackMode::PEDAL:
-        /* code */
+        handlePedalMode();
         break;
     case PlaybackMode::TOUCH:
         /* code */
@@ -173,6 +178,7 @@ void Sequence::reset() {
     currPulse = 0;
     prevStep = currStep;
     currStep = 0;
+    currPedalStep = 0;
     clearLEDs();
 }
 
@@ -221,6 +227,16 @@ void Sequence::handlePingPongMode() {
         {
             currStep--;
         }
+    }
+}
+
+void Sequence::handlePedalMode() {
+    if (currPedalStep >= ((length * 2) - 1)) {
+        currPedalStep = 0;
+        currStep = PEDAL_PROGRESSION[currPedalStep];
+    } else {
+        currPedalStep++;
+        currStep = PEDAL_PROGRESSION[currPedalStep];
     }
 }
 

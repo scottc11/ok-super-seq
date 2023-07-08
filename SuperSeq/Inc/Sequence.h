@@ -52,6 +52,8 @@ public:
     int currPulse;
     int currStep;
     int prevStep;
+    int currPedalStep;
+    int prevPedalStep;
     uint8_t length;      // how long the sequence is in steps (max 8, min 1)
     uint16_t stepLength; // how many pulses to a step (zero-indexed!)
     bool queueStepLength;
@@ -77,6 +79,7 @@ public:
 
     void handleDefaultMode();
     void handlePingPongMode();
+    void handlePedalMode();
 
     void handleTouchedStep(int step);
     void handleReleasedStep(int step);
