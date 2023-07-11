@@ -10,15 +10,19 @@ int CHANNEL_LED_PINS[4][8] = {
 };
 
 void Sequence::init() {
+    adc.setFilter(0.1);
     playback = true;
     clockDivider = 1;
     clockMultiplier = 1;
     updateStepLength();
     playback = true;
+    setPlaybackMode(pbMode); // interrupts trigger this function on startup, so re-calling it ensure all the settings are correct for each mode;
 }
 
 void Sequence::setPlaybackMode(PlaybackMode mode) {
     pbMode = mode;
+    playback = true;
+    clearLEDs();
     switch (pbMode)
     {
     case PlaybackMode::DEFAULT:
@@ -32,6 +36,8 @@ void Sequence::setPlaybackMode(PlaybackMode mode) {
         prevPedalStep = 0;
         break;
     case PlaybackMode::TOUCH:
+        playback = false;
+        activateStep(currStep, prevStep);
         break;
     }
 }
@@ -145,7 +151,7 @@ void Sequence::stop() {
 
 void Sequence::advance() {
     
-    if (override == false)
+    if (override == false && pbMode != PlaybackMode::TOUCH)
     {
         if (currStep == 0 && prevStep == 0) {
             prevStep = length - 1;
@@ -180,6 +186,7 @@ void Sequence::reset() {
     currStep = 0;
     currPedalStep = 0;
     clearLEDs();
+    activateStep(currStep, prevStep);
 }
 
 void Sequence::handleDefaultMode() {
@@ -254,7 +261,9 @@ void Sequence::handleTouchedStep(int step)
 
 void Sequence::handleReleasedStep(int step)
 {
-    activateStep(currStep, currTouchedStep);
+    if (pbMode != PlaybackMode::TOUCH) {
+        activateStep(currStep, currTouchedStep);
+    }
     if (!playback) {
         clockOut.write(0);
     }
