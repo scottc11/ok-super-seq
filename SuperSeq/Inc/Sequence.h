@@ -2,6 +2,7 @@
 
 #include "main.h"
 #include "DigitalOut.h"
+#include "AnalogHandle.h"
 #include "CD4051.h"
 #include "IS31FL3246.h"
 
@@ -24,10 +25,11 @@ public:
     Sequence(
         int _index,
         IS31FL3246 *leds_ptr,
+        PinName adc_pin,
         PinName trig_pin,
         PinName mux_sel_a,
         PinName mux_sel_b,
-        PinName mux_sel_c) : mux(mux_sel_a, mux_sel_b, mux_sel_c), clockOut(trig_pin)
+        PinName mux_sel_c) : adc(adc_pin), clockOut(trig_pin), mux(mux_sel_a, mux_sel_b, mux_sel_c)
     {
         leds = leds_ptr;
         index = _index;
@@ -38,6 +40,7 @@ public:
     }
 
     int index;
+    AnalogHandle adc;
     DigitalOut clockOut;
     CD4051 mux;
     IS31FL3246 *leds;

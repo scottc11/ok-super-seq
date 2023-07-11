@@ -3,6 +3,8 @@
 #include "cmsis_os.h"
 #include "common.h"
 
+#define ADC_DMA_BUFF_SIZE 4
+
 #define NUM_CHANNELS 4
 
 #define PPQN 96
@@ -28,6 +30,11 @@
 
 #define MASTER_CLOCK_IN PA_3
 #define MASTER_CLOCK_OUT PA_9
+
+#define ADC_1 PA_4
+#define ADC_2 PA_5
+#define ADC_3 PA_6
+#define ADC_4 PA_7
 
 #define CLOCK_OUT_1 PB_10
 #define CLOCK_OUT_2 PB_12

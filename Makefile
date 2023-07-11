@@ -86,6 +86,7 @@ ok-STM32F4/system/Src/system_stm32f4xx.c \
 ok-STM32F4/system/Src/system_clock_config.c
 
 CPP_SOURCES += \
+ok-STM32F4/HAL/Src/AnalogHandle.cpp \
 ok-STM32F4/HAL/Src/gpio_api.cpp \
 ok-STM32F4/HAL/Src/error_handler.cpp \
 ok-STM32F4/HAL/Src/Flash.cpp \
