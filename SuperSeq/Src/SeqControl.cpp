@@ -145,53 +145,62 @@ void SeqControl::handleEncoder(int channel, int bit_position, uint16_t pin_state
     }
 }
 
-void SeqControl::handleEncoderPress(int channel)
+void SeqControl::handleEncoderButton(int channel, int state)
 {
-    channels[channel]->syncRhythmWithMaster();
-}
-
-/**
- * @brief 
- * 
- * @param channel sequence index
- * @param position 1, 2, 3, or 4
- */
-void SeqControl::handleSlideSwitch(int channel, int position)
-{
-    switch (position)
-    {
-    case 1:
-        channels[channel]->setPlaybackMode(Sequence::PlaybackMode::DEFAULT);
-        break;
-    case 2:
-        channels[channel]->setPlaybackMode(Sequence::PlaybackMode::PINGPONG);
-        break;
-    case 3:
-        channels[channel]->setPlaybackMode(Sequence::PlaybackMode::PEDAL);
-        break;
-    case 4:
-        channels[channel]->setPlaybackMode(Sequence::PlaybackMode::TOUCH);
-        break;
+    if (state == LOW) {
+        channels[channel]->syncRhythmWithMaster();
     }
 }
 
-void SeqControl::handleAltButtonPress()
+/**
+ * @brief
+ *
+ * @param channel sequence index
+ * @param position 1, 2, 3, or 4
+ * @param state pin state HIGH or LOW
+ */
+void SeqControl::handleSlideSwitch(int channel, int position, int state)
+{
+    if (state == LOW) {
+        switch (position)
+        {
+        case 1:
+            channels[channel]->setPlaybackMode(Sequence::PlaybackMode::DEFAULT);
+            break;
+        case 2:
+            channels[channel]->setPlaybackMode(Sequence::PlaybackMode::PINGPONG);
+            break;
+        case 3:
+            channels[channel]->setPlaybackMode(Sequence::PlaybackMode::PEDAL);
+            break;
+        case 4:
+            channels[channel]->setPlaybackMode(Sequence::PlaybackMode::TOUCH);
+            break;
+        }
+    }
+}
+
+void SeqControl::handleAltButtonPress(int state)
 {
 
 }
 
-void SeqControl::handleRunButtonPress()
+void SeqControl::handleRunButtonPress(int state)
 {
-    globalPlayback = !globalPlayback;
-    for (int i = 0; i < NUM_CHANNELS; i++)
-    {
-        if (globalPlayback)
+    if (state == LOW) {
+        globalPlayback = !globalPlayback;
+        for (int i = 0; i < NUM_CHANNELS; i++)
         {
-            setRunLED(1);
-            channels[i]->stop();
-        } else {
-            setRunLED(0);
-            channels[i]->start();
+            if (globalPlayback)
+            {
+                setRunLED(1);
+                channels[i]->stop();
+            }
+            else
+            {
+                setRunLED(0);
+                channels[i]->start();
+            }
         }
     }
 }
@@ -200,11 +209,13 @@ void SeqControl::handleRunButtonPress()
  * @brief Reset all sequences
  * 
  */
-void SeqControl::handleResetButtonPress()
+void SeqControl::handleResetButtonPress(int state)
 {
     for (int i = 0; i < NUM_CHANNELS; i++)
     {
-        channels[i]->reset();
+        if (state == LOW) {
+            channels[i]->reset();
+        }
     }
 }
 
@@ -213,9 +224,18 @@ void SeqControl::handleResetButtonPress()
  * 
  * @param id 1, 2, or 3 == A, B, C
  */
-void SeqControl::handleClockSwitch(int id)
+void SeqControl::handleClockSwitch(int masterIndex, int slaveIndex, int state, int other_pin)
 {
-
+    if (state == LOW) {
+        channels[masterIndex]->setClockTarget(controller.channels[slaveIndex]);
+    } else {
+        if (state == HIGH && other_pin == HIGH)
+        {
+            // neutral position
+            channels[masterIndex]->clearClockTarget();
+            channels[slaveIndex]->clearClockTarget();
+        }
+    }
 }
 
 /**

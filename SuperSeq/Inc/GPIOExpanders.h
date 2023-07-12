@@ -20,9 +20,9 @@ void int_callback_gpio3();
 
 void handle_gpio_interrupt(MCP23017 *gpio);
 
-void gpio1_handler(int pin, uint16_t pin_states);
-void gpio2_handler(int pin, uint16_t pin_states);
-void gpio3_handler(int pin, uint16_t pin_states);
+void gpio1_handler(int pin, int state);
+void gpio2_handler(int pin, int state);
+void gpio3_handler(int pin, int state);
 
 enum GPIO1
 {

@@ -58,11 +58,11 @@ public:
     void onRelease(uint8_t pad);
 
     void handleEncoder(int channel, int bit_position, uint16_t pin_states);
-    void handleEncoderPress(int channel);
-    void handleAltButtonPress();
-    void handleRunButtonPress();
-    void handleResetButtonPress();
-    void handleSlideSwitch(int channel, int position);
-    void handleClockSwitch(int id);
+    void handleEncoderButton(int channel, int state);
+    void handleAltButtonPress(int state);
+    void handleRunButtonPress(int state);
+    void handleResetButtonPress(int state);
+    void handleSlideSwitch(int channel, int position, int state);
+    void handleClockSwitch(int masterIndex, int slaveIndex, int state, int other_pin);
     void handleModSwitch(int id);
 };

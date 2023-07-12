@@ -129,33 +129,33 @@ void int_callback_gpio3()
 /**
  * @brief take a GPIO instance and funnel it to the correct handler
  * 
- * @param gpio 
+ * @param gpio pointer to gpio instance
  */
 void handle_gpio_interrupt(MCP23017 *gpio) {
-    uint16_t pin_states = gpio->digitalReadAB();
-    uint8_t address = gpio->address >> 1;
+    gpio->digitalReadAB();
+    uint8_t gpio_id = gpio->address >> 1;
     for (int i = 0; i < 16; i++)
     {
-        bool is_low = bitwise_read_bit(pin_states, i);
-        if (is_low == false)
+        if (bitwise_read_bit(gpio->currPinStates, i) != bitwise_read_bit(gpio->prevPinStates, i))
         {
-            switch (address)
+            int pin_state = bitwise_read_bit(gpio->currPinStates, i);
+            switch (gpio_id)
             {
             case GPIO1_I2C_ADDRESS:
-                gpio1_handler(i, pin_states);
+                gpio1_handler(i, pin_state);
                 break;
             case GPIO2_I2C_ADDRESS:
-                gpio2_handler(i, pin_states);
+                gpio2_handler(i, pin_state);
                 break;
             case GPIO3_I2C_ADDRESS:
-                gpio3_handler(i, pin_states);
+                gpio3_handler(i, pin_state);
                 break;
             }
         }
     }
 }
 
-void gpio1_handler(int pin, uint16_t pin_states)
+void gpio1_handler(int pin, int state)
 {
     switch (pin)
     {
@@ -176,31 +176,31 @@ void gpio1_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO1::SW3_POS4:
-        controller.handleSlideSwitch(2, 4);
+        controller.handleSlideSwitch(2, 4, state);
         break;
 
     case GPIO1::SW3_POS3:
-        controller.handleSlideSwitch(2, 3);
+        controller.handleSlideSwitch(2, 3, state);
         break;
 
     case GPIO1::SW3_POS2:
-        controller.handleSlideSwitch(2, 2);
+        controller.handleSlideSwitch(2, 2, state);
         break;
 
     case GPIO1::SW3_POS1:
-        controller.handleSlideSwitch(2, 1);
+        controller.handleSlideSwitch(2, 1, state);
         break;
 
     case GPIO1::ENC4_BTN:
-        controller.handleEncoderPress(3);
+        controller.handleEncoderButton(3, state);
         break;
 
     case GPIO1::ENC3_BTN:
-        controller.handleEncoderPress(2);
+        controller.handleEncoderButton(2, state);
         break;
 
     case GPIO1::ENC3_A:
-        controller.handleEncoder(2, GPIO1::ENC3_A, pin_states);
+        controller.handleEncoder(2, GPIO1::ENC3_A, gpio1.currPinStates);
         break;
 
     case GPIO1::ENC3_B:
@@ -213,7 +213,7 @@ void gpio1_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO1::ENC2_A:
-        controller.handleEncoder(1, GPIO1::ENC2_A, pin_states);
+        controller.handleEncoder(1, GPIO1::ENC2_A, gpio1.currPinStates);
         break;
 
     case GPIO1::ENC2_B:
@@ -222,32 +222,32 @@ void gpio1_handler(int pin, uint16_t pin_states)
     }
 }
 
-void gpio2_handler(int pin, uint16_t pin_states)
+void gpio2_handler(int pin, int state)
 {
     switch (pin)
     {
     case GPIO2::SW1_POS1:
-        controller.handleSlideSwitch(0, 1);
+        controller.handleSlideSwitch(0, 1, state);
         break;
 
     case GPIO2::SW1_POS2:
-        controller.handleSlideSwitch(0, 2);
+        controller.handleSlideSwitch(0, 2, state);
         break;
 
     case GPIO2::SW1_POS3:
-        controller.handleSlideSwitch(0, 3);
+        controller.handleSlideSwitch(0, 3, state);
         break;
 
     case GPIO2::SW1_POS4:
-        controller.handleSlideSwitch(0, 4);
+        controller.handleSlideSwitch(0, 4, state);
         break;
 
     case GPIO2::CS_A_UP:
-        // channel 1 adds its clock to channel 0
+        controller.handleClockSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, CS_A_DOWN));
         break;
 
     case GPIO2::CS_A_DOWN:
-        // channel 0 adds its clock to channel 1
+        controller.handleClockSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, CS_A_UP));
         break;
 
     case GPIO2::MS_A_UP:
@@ -259,27 +259,27 @@ void gpio2_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO2::ENC2_BTN:
-        controller.handleEncoderPress(1);
+        controller.handleEncoderButton(1, state);
         break;
 
     case GPIO2::SW2_POS1:
-        controller.handleSlideSwitch(1, 1);
+        controller.handleSlideSwitch(1, 1, state);
         break;
 
     case GPIO2::SW2_POS2:
-        controller.handleSlideSwitch(1, 2);
+        controller.handleSlideSwitch(1, 2, state);
         break;
 
     case GPIO2::SW2_POS3:
-        controller.handleSlideSwitch(1, 3);
+        controller.handleSlideSwitch(1, 3, state);
         break;
 
     case GPIO2::SW2_POS4:
-        controller.handleSlideSwitch(1, 4);
+        controller.handleSlideSwitch(1, 4, state);
         break;
 
     case GPIO2::ENC1_A:
-        controller.handleEncoder(0, GPIO2::ENC1_A, pin_states);
+        controller.handleEncoder(0, GPIO2::ENC1_A, gpio2.currPinStates);
         break;
 
     case GPIO2::ENC1_B:
@@ -287,12 +287,12 @@ void gpio2_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO2::ENC1_BTN:
-        controller.handleEncoderPress(0);
+        controller.handleEncoderButton(0, state);
         break;
     }
 }
 
-void gpio3_handler(int pin, uint16_t pin_states)
+void gpio3_handler(int pin, int state)
 {
     switch (pin)
     {
@@ -313,44 +313,44 @@ void gpio3_handler(int pin, uint16_t pin_states)
         break;
 
     case GPIO3::SW4_POS4:
-        controller.handleSlideSwitch(3, 4);
+        controller.handleSlideSwitch(3, 4, state);
         break;
 
     case GPIO3::SW4_POS3:
-        controller.handleSlideSwitch(3, 3);
+        controller.handleSlideSwitch(3, 3, state);
         break;
 
     case GPIO3::SW4_POS2:
-        controller.handleSlideSwitch(3, 2);
+        controller.handleSlideSwitch(3, 2, state);
         break;
 
     case GPIO3::SW4_POS1:
-        controller.handleSlideSwitch(3, 1);
+        controller.handleSlideSwitch(3, 1, state);
         break;
 
     case GPIO3::RESET_LED:
         break;
 
     case GPIO3::RESET_BTN:
-        controller.handleResetButtonPress();
+        controller.handleResetButtonPress(state);
         break;
 
     case GPIO3::RUN_LED:
         break;
 
     case GPIO3::RUN_BTN:
-        controller.handleRunButtonPress();
+        controller.handleRunButtonPress(state);
         break;
 
     case GPIO3::ALT_LED:
         break;
 
     case GPIO3::ALT_BTN:
-        controller.handleAltButtonPress();
+        controller.handleAltButtonPress(state);
         break;
 
     case GPIO3::ENC4_A:
-        controller.handleEncoder(3, GPIO3::ENC4_A, pin_states);
+        controller.handleEncoder(3, GPIO3::ENC4_A, gpio3.currPinStates);
         break;
 
     case GPIO3::ENC4_B:
