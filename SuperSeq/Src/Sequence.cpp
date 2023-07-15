@@ -59,12 +59,19 @@ void Sequence::syncRhythmWithChannel(int divider, int multiplier)
     updateStepLength();
 }
 
-// make an "END OF STEP" event to add to the queue
-// this will take 
-
+/**
+ * @brief
+ *
+ * NOTE: Polythrythms and Polymeters are two very different things.
+ * 
+ * Polyrhythms: groups of different numbers of beats, but each group takes the same amount of time to return to "beat 1"
+ * Polymeters:  two different time signiatures / meters, playing back at the same time. Each beat of a meter steps according to the tempo, but the phrases have different lengths
+ *
+ * TODO: because of this, you actually need to devide everything by 4? So (96 * 4) / diviser
+ * 
+ * @param value either 1 or -1
+ */
 void Sequence::setRhythm(int value) {
-
-
     // if value negative and divider > 1, subtract 1 from divider, and don't touch multiplier
     if (value < 0 && clockDivider > 1) {
         clockDivider -= 1;
@@ -96,7 +103,13 @@ void Sequence::setRhythm(int value) {
     updateStepLength();
 }
 
-uint16_t Sequence::calculateStepLength()
+// 384 / 5 == 76.8
+// rounds down to 76
+// meaning pulse will be set to 0 at beat 380
+// meaning you must use the diviser to determine if you are on the last beat of the bar (example, beat 5 in a 5/4 polyrythm)
+// in which case, wait till
+uint16_t
+Sequence::calculateStepLength()
 {
     return ((PPQN * clockDivider) / clockMultiplier) - 1;
 }
@@ -119,11 +132,17 @@ void Sequence::updateStepLength()
 }
 
 void Sequence::callback_ppqn() {
-    clockOut.write(0); // always set the trig out back low 
+    if (currPulse != timeStamp) {
+        clockOut.write(0); // always set the trig out back low
+    }
 
     if (currPulse == 0) {
         if (playback) {
             advance();
+            if (clockTarget != NULL)
+            {
+                clockTarget->advance(); // i guess depending on the time this takes place, the 
+            }
         }
     }
 
@@ -150,7 +169,7 @@ void Sequence::stop() {
 }
 
 void Sequence::advance() {
-    
+    timeStamp = currPulse;
     if (override == false && pbMode != PlaybackMode::TOUCH)
     {
         if (currStep == 0 && prevStep == 0) {
@@ -286,4 +305,14 @@ void Sequence::clearLEDs() {
         setLED(i, 0);
     }
     
+}
+
+void Sequence::setClockTarget(Sequence *target)
+{
+    clockTarget = target;
+}
+
+void Sequence::clearClockTarget()
+{
+    clockTarget = NULL;
 }

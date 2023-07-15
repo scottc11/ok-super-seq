@@ -50,6 +50,9 @@ public:
     PlaybackMode pbMode;
     bool direction;
 
+    Sequence *clockTarget;
+    int timeStamp;
+
     int clockDivider;
     int clockMultiplier;
     int currPulse;
@@ -70,6 +73,9 @@ public:
     void setRhythm(int value);
     void syncRhythmWithMaster();
     void syncRhythmWithChannel(int divider, int mutiplier);
+
+    void setClockTarget(Sequence *target);
+    void clearClockTarget();
 
     void start();
     void stop();
