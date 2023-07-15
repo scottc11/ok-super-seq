@@ -1,6 +1,7 @@
 #include "SeqControl.h"
 
 void SeqControl::init() {
+
     // initialize channel touch pads
     touch_pads->init();
     touch_pads->attachInterruptCallback(callback(this, &SeqControl::handleTouchInterrupt));
@@ -13,6 +14,8 @@ void SeqControl::init() {
     ext_step_int.rise(callback(this, &SeqControl::tpStepHandler));
     ext_pulse_int.rise(callback(this, &SeqControl::tpPulseHandler));
     tp_reset_int.rise(callback(this, &SeqControl::tpResetHandler));
+
+    
 
     for (int i = 0; i < NUM_CHANNELS; i++)
     {
@@ -49,16 +52,25 @@ void SeqControl::advanceAll() {
     if (pulse == 12) {
         masterClockOut.write(0);
     }
-    if (pulse < PPQN) {
+
+    if (!waitForClock)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            // channels[i]->callback_ppqn();
+            int mod_pulse = pulse + ((PPQN * step));
+            channels[i]->handle_pulse(mod_pulse);
+        }
+    }
+
+    if (pulse < PPQN - 1) {
         pulse++;
     } else {
         pulse = 0;
-        
-    }
-    if (!waitForClock) {
-        for (int i = 0; i < 4; i++)
-        {
-            channels[i]->callback_ppqn();
+        if (step < 3) {
+            step++;
+        } else {
+            step = 0;
         }
     }
 }
@@ -76,7 +88,7 @@ void SeqControl::onTouch(uint8_t pad)
     
     if (pad < 8)
     {        
-        int step = TOUCH_PAD_MAP[pad];
+        int touchedStep = TOUCH_PAD_MAP[pad];
         for (int i = 0; i < NUM_CHANNELS; i++)
         {
 
@@ -92,7 +104,7 @@ void SeqControl::onTouch(uint8_t pad)
             // touch-release needs to snap back to the most recently touched pad (thatis still touched)
 
             channels[i]->override = true;
-            channels[i]->handleTouchedStep(step);
+            channels[i]->handleTouchedStep(touchedStep);
         }
     }
     
@@ -101,7 +113,7 @@ void SeqControl::onTouch(uint8_t pad)
 void SeqControl::onRelease(uint8_t pad)
 {
     if (pad < 8) {
-        int step = TOUCH_PAD_MAP[pad];
+        int touchedStep = TOUCH_PAD_MAP[pad];
         for (int i = 0; i < NUM_CHANNELS; i++)
         {
             if (touch_pads->padIsTouched()) {
@@ -114,7 +126,7 @@ void SeqControl::onRelease(uint8_t pad)
                 
             } else {
                 // snap back to currStep
-                channels[i]->handleReleasedStep(step);
+                channels[i]->handleReleasedStep(touchedStep);
                 channels[i]->override = false;
             }
         }

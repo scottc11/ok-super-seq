@@ -18,7 +18,7 @@ void int_callback_gpio1();
 void int_callback_gpio2();
 void int_callback_gpio3();
 
-void handle_gpio_interrupt(MCP23017 *gpio);
+void handle_gpio_interrupt(MCP23017 *gpio, bool initializing = false);
 
 void gpio1_handler(int pin, int state);
 void gpio2_handler(int pin, int state);
@@ -26,8 +26,8 @@ void gpio3_handler(int pin, int state);
 
 enum GPIO1
 {
-    CS_B_UP,
     CS_B_DOWN,
+    CS_B_UP,
     MS_B_UP,
     MS_B_DOWN,
     SW3_POS4,
@@ -50,8 +50,8 @@ enum GPIO2
     SW1_POS2,
     SW1_POS3,
     SW1_POS4,
-    CS_A_UP,
     CS_A_DOWN,
+    CS_A_UP,
     MS_A_UP,
     MS_A_DOWN,
     ENC2_BTN,

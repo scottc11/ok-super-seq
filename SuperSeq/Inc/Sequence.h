@@ -5,6 +5,7 @@
 #include "AnalogHandle.h"
 #include "CD4051.h"
 #include "IS31FL3246.h"
+#include "Polyrhythms.h"
 
 class Sequence {
 public:
@@ -29,7 +30,7 @@ public:
         PinName trig_pin,
         PinName mux_sel_a,
         PinName mux_sel_b,
-        PinName mux_sel_c) : adc(adc_pin), clockOut(trig_pin), mux(mux_sel_a, mux_sel_b, mux_sel_c)
+        PinName mux_sel_c) : adc(adc_pin), clockOut(trig_pin), mux(mux_sel_a, mux_sel_b, mux_sel_c), clockTarget(nullptr)
     {
         leds = leds_ptr;
         index = _index;
@@ -58,6 +59,7 @@ public:
     int currPulse;
     int currStep;
     int prevStep;
+    int polyStep = 0;
     int currPedalStep;
     int prevPedalStep;
     uint8_t length;      // how long the sequence is in steps (max 8, min 1)
@@ -85,6 +87,7 @@ public:
     uint16_t calculateStepLength();
     void updateStepLength();
     void callback_ppqn();
+    void handle_pulse(int pulse);
 
     void handleDefaultMode();
     void handlePingPongMode();

@@ -32,7 +32,6 @@ void gpio1_init(MCP23017 *gpio)
     gpio->setInterupt(MCP23017_PORTB, 0b01000111);  // 1 = interupt, 0 = not interupt
     gpio->setPullUp(MCP23017_PORTB, 0xff);
 
-    gpio->digitalReadAB();
     gpio1_int.fall(callback(int_callback_gpio1));
 }
 
@@ -63,8 +62,6 @@ void gpio2_init(MCP23017 *gpio)
     gpio->setDirection(MCP23017_PORTB, 0b11111111); // 1 = input, 0 = output
     gpio->setInterupt(MCP23017_PORTB, 0b10111111);  // 1 = interupt, 0 = not interupt
     gpio->setPullUp(MCP23017_PORTB, 0xff);
-
-    gpio->digitalReadAB();
 
     gpio2_int.fall(callback(int_callback_gpio2));
 }
@@ -99,7 +96,6 @@ void gpio3_init(MCP23017 *gpio)
     gpio->setInputPolarity(MCP23017_PORTA, 0x00);
     gpio->setInputPolarity(MCP23017_PORTB, 0x00);
 
-    gpio->digitalReadAB();
     gpio3_int.fall(callback(int_callback_gpio3));
 }
 
@@ -131,12 +127,12 @@ void int_callback_gpio3()
  * 
  * @param gpio pointer to gpio instance
  */
-void handle_gpio_interrupt(MCP23017 *gpio) {
+void handle_gpio_interrupt(MCP23017 *gpio, bool initializing /*false*/) {
     gpio->digitalReadAB();
     uint8_t gpio_id = gpio->address >> 1;
     for (int i = 0; i < 16; i++)
     {
-        if (bitwise_read_bit(gpio->currPinStates, i) != bitwise_read_bit(gpio->prevPinStates, i))
+        if (bitwise_read_bit(gpio->currPinStates, i) != bitwise_read_bit(gpio->prevPinStates, i) || initializing)
         {
             int pin_state = bitwise_read_bit(gpio->currPinStates, i);
             switch (gpio_id)
@@ -160,11 +156,11 @@ void gpio1_handler(int pin, int state)
     switch (pin)
     {
     case GPIO1::CS_B_UP:
-        
+        controller.handleClockSwitch(2, 1, state, bitwise_read_bit(gpio1.currPinStates, CS_B_DOWN));
         break;
 
     case GPIO1::CS_B_DOWN:
-        
+        controller.handleClockSwitch(1, 2, state, bitwise_read_bit(gpio1.currPinStates, CS_B_UP));
         break;
 
     case GPIO1::MS_B_UP:
@@ -243,11 +239,11 @@ void gpio2_handler(int pin, int state)
         break;
 
     case GPIO2::CS_A_UP:
-        controller.handleClockSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, CS_A_DOWN));
+        controller.handleClockSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, CS_A_UP));
         break;
 
     case GPIO2::CS_A_DOWN:
-        controller.handleClockSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, CS_A_UP));
+        controller.handleClockSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, CS_A_DOWN));
         break;
 
     case GPIO2::MS_A_UP:
@@ -305,11 +301,11 @@ void gpio3_handler(int pin, int state)
         break;
 
     case GPIO3::CS_C_UP:
-        
+        controller.handleClockSwitch(3, 2, state, bitwise_read_bit(gpio2.currPinStates, CS_C_DOWN));
         break;
 
     case GPIO3::CS_C_DOWN:
-        
+        controller.handleClockSwitch(2, 3, state, bitwise_read_bit(gpio2.currPinStates, CS_C_UP));
         break;
 
     case GPIO3::SW4_POS4:

@@ -50,6 +50,7 @@ void Sequence::syncRhythmWithMaster()
 {
     clockDivider = 1;
     clockMultiplier = 1;
+    polyStep = 0;
     updateStepLength();
 }
 void Sequence::syncRhythmWithChannel(int divider, int multiplier)
@@ -131,6 +132,30 @@ void Sequence::updateStepLength()
     }
 }
 
+/**
+ * @brief polyrhythm pulse callback
+ * 
+ * @param pulse 
+ */
+void Sequence::handle_pulse(int pulse) {
+    clockOut.write(0); // always set the trig out back low
+
+    if (pulse == POLYRHYTHMS[clockDivider - 1]->triggers[polyStep]) {
+        if (playback)
+        {
+            advance();
+        }
+        polyStep++;
+        if (polyStep >= clockDivider) {
+            polyStep = 0;
+        }
+    }
+}
+
+/**
+ * @brief Origianl ppqn callback
+ * 
+ */
 void Sequence::callback_ppqn() {
     if (currPulse != timeStamp) {
         clockOut.write(0); // always set the trig out back low
@@ -178,6 +203,11 @@ void Sequence::advance() {
         activateStep(currStep, prevStep);
     }
 
+    if (clockTarget != NULL)
+    {
+        clockTarget->advance();
+    }
+
     clockOut.write(1);
 
     prevStep = currStep;
@@ -204,6 +234,7 @@ void Sequence::reset() {
     prevStep = currStep;
     currStep = 0;
     currPedalStep = 0;
+    polyStep = 0;
     clearLEDs();
     activateStep(currStep, prevStep);
 }
@@ -314,5 +345,5 @@ void Sequence::setClockTarget(Sequence *target)
 
 void Sequence::clearClockTarget()
 {
-    clockTarget = NULL;
+    clockTarget = nullptr;
 }

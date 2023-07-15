@@ -36,7 +36,6 @@ public:
     MPR121 *touch_pads;
     Sequence *channels[4];
     
-
     bool globalPlayback;
 
     int pulse;

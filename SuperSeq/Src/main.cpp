@@ -13,6 +13,7 @@
 #include "SX1509.h"
 #include "SeqControl.h"
 #include "Sequence.h"
+#include "Polyrhythms.h"
 #include "GPIOExpanders.h"
 
 DigitalOut gate(PB_10);
@@ -34,6 +35,10 @@ Sequence seq4(3, &led_driver, ADC_4, CLOCK_OUT_4, MUX_4_A, MUX_4_B, MUX_4_C);
 
 SeqControl controller(&touch_pads, &seq1, &seq2, &seq3, &seq4);
 
+/*
+TODO: https://youtu.be/f5rsu8IdN8A?t=447
+The way polyrthyms are deivided, if played fast enough, eventually will create chords 🤯
+*/
 void task_main(void *pvParameters)
 {
     i2c3.init();
@@ -53,6 +58,12 @@ void task_main(void *pvParameters)
     HAL_Delay(10);
 
     controller.init();
+
+    handle_gpio_interrupt(&gpio1, true);
+    handle_gpio_interrupt(&gpio2, true);
+    handle_gpio_interrupt(&gpio3, true);
+
+    init_polyrhythms();
 
     while (1)
     {
