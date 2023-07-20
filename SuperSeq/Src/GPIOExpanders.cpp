@@ -301,11 +301,11 @@ void gpio3_handler(int pin, int state)
         break;
 
     case GPIO3::CS_C_UP:
-        controller.handleClockSwitch(3, 2, state, bitwise_read_bit(gpio2.currPinStates, CS_C_DOWN));
+        controller.handleClockSwitch(3, 2, state, bitwise_read_bit(gpio3.currPinStates, CS_C_DOWN));
         break;
 
     case GPIO3::CS_C_DOWN:
-        controller.handleClockSwitch(2, 3, state, bitwise_read_bit(gpio2.currPinStates, CS_C_UP));
+        controller.handleClockSwitch(2, 3, state, bitwise_read_bit(gpio3.currPinStates, CS_C_UP));
         break;
 
     case GPIO3::SW4_POS4:

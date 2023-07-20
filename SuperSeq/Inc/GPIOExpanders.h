@@ -68,8 +68,8 @@ enum GPIO3
 {
     MS_C_UP,
     MS_C_DOWN,
-    CS_C_UP,
     CS_C_DOWN,
+    CS_C_UP,
     SW4_POS4,
     SW4_POS3,
     SW4_POS2,
