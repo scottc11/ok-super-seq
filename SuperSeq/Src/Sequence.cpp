@@ -12,9 +12,6 @@ int CHANNEL_LED_PINS[4][8] = {
 void Sequence::init() {
     adc.setFilter(0.1);
     playback = true;
-    clockDivider = 1;
-    clockMultiplier = 1;
-    updateStepLength();
     playback = true;
     setPlaybackMode(pbMode); // interrupts trigger this function on startup, so re-calling it ensure all the settings are correct for each mode;
 }
@@ -48,16 +45,7 @@ void Sequence::setDirection(Direction _direction) {
 
 void Sequence::syncRhythmWithMaster()
 {
-    clockDivider = 1;
-    clockMultiplier = 1;
-    polyStep = 0;
-    updateStepLength();
-}
-void Sequence::syncRhythmWithChannel(int divider, int multiplier)
-{
-    clockDivider = divider;
-    clockMultiplier = multiplier;
-    updateStepLength();
+    divisorIndex = POLYRHYTHM_DEFAULT_DIVISOR;
 }
 
 /**
@@ -73,114 +61,33 @@ void Sequence::syncRhythmWithChannel(int divider, int multiplier)
  * @param value either 1 or -1
  */
 void Sequence::setRhythm(int value) {
-    // if value negative and divider > 1, subtract 1 from divider, and don't touch multiplier
-    if (value < 0 && clockDivider > 1) {
-        clockDivider -= 1;
-    }
-
-    // if value negative and divider == 1, add 1 to multiplier, and don't touch divider
-    else if (value < 0 && clockDivider == 1)
-    {
-        clockMultiplier += 1;
-        if (clockMultiplier > 16)
-        {
-            clockMultiplier = 16;
-        }
-    }
-
-    // if value positive and multiplier > 1, subtract 1 from multiplier, don't touch divider
-    else if (value > 0 && clockMultiplier > 1) {
-        clockMultiplier -= 1;
-    }
-
-    // if value positive and multiplier == 1, add 1 to devidier and don't touch multiplier
-    else if (value > 0 && clockMultiplier == 1) {
-        clockDivider += 1;
-        if (clockDivider > 16) {
-            clockDivider = 16;
-        }
-    }
-
-    updateStepLength();
-}
-
-// 384 / 5 == 76.8
-// rounds down to 76
-// meaning pulse will be set to 0 at beat 380
-// meaning you must use the diviser to determine if you are on the last beat of the bar (example, beat 5 in a 5/4 polyrythm)
-// in which case, wait till
-uint16_t
-Sequence::calculateStepLength()
-{
-    return ((PPQN * clockDivider) / clockMultiplier) - 1;
-}
-
-/**
- * @brief either imedieatly updates the stepLength, or queues an update for
- * when the next step overflow event occurs
- * 
- */
-void Sequence::updateStepLength()
-{
-    if (currPulse > calculateStepLength())
-    {
-        queueStepLength = true;
-    }
-    else
-    {
-        stepLength = calculateStepLength();
+    divisorIndex += value;
+    
+    if (divisorIndex > POLYRHYTHM_NUM_DIVISORS) {
+        divisorIndex = POLYRHYTHM_NUM_DIVISORS - 1;
+    } else if (divisorIndex < 0) {
+        divisorIndex = 0;
     }
 }
 
 /**
- * @brief polyrhythm pulse callback
- * 
- * @param pulse 
+ * @brief triggers once for every PPQN
+ *
+ * @param pulse current out of POLYRHYTHM_PULSES
  */
-void Sequence::handle_pulse(int pulse) {
-    clockOut.write(0); // always set the trig out back low
+void Sequence::handle_pulse(int pulse)
+{
+    if (currPulse != timeStamp)
+    {
+        clockOut.write(0); // always set the trig out back low
+    }
+    currPulse = pulse;
 
-    if (pulse == POLYRHYTHMS[clockDivider - 1]->triggers[polyStep]) {
+    if (bitwise_read_bit(POLYRHYTHMS[pulse], divisorIndex))
+    {
         if (playback)
         {
             advance();
-        }
-        polyStep++;
-        if (polyStep >= clockDivider) {
-            polyStep = 0;
-        }
-    }
-}
-
-/**
- * @brief Origianl ppqn callback
- * 
- */
-void Sequence::callback_ppqn() {
-    if (currPulse != timeStamp) {
-        clockOut.write(0); // always set the trig out back low
-    }
-
-    if (currPulse == 0) {
-        if (playback) {
-            advance();
-            if (clockTarget != NULL)
-            {
-                clockTarget->advance(); // i guess depending on the time this takes place, the 
-            }
-        }
-    }
-
-    if (currPulse < stepLength)
-    {
-        currPulse++;
-    }
-    else
-    {
-        currPulse = 0;
-        if (queueStepLength) {
-            stepLength = calculateStepLength();
-            queueStepLength = false;
         }
     }
 }
@@ -234,7 +141,6 @@ void Sequence::reset() {
     prevStep = currStep;
     currStep = 0;
     currPedalStep = 0;
-    polyStep = 0;
     clearLEDs();
     activateStep(currStep, prevStep);
 }

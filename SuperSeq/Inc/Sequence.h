@@ -54,17 +54,15 @@ public:
     Sequence *clockTarget;
     int timeStamp;
 
-    int clockDivider;
-    int clockMultiplier;
+    int divisorIndex = 8;
+
     int currPulse;
     int currStep;
     int prevStep;
-    int polyStep = 0;
     int currPedalStep;
     int prevPedalStep;
     uint8_t length;      // how long the sequence is in steps (max 8, min 1)
-    uint16_t stepLength; // how many pulses to a step (zero-indexed!)
-    bool queueStepLength;
+    
     int currTouchedStep;
     int prevTouchedStep;
     bool override;
@@ -74,7 +72,6 @@ public:
     void setDirection(Direction _direction);
     void setRhythm(int value);
     void syncRhythmWithMaster();
-    void syncRhythmWithChannel(int divider, int mutiplier);
 
     void setClockTarget(Sequence *target);
     void clearClockTarget();
@@ -84,9 +81,6 @@ public:
     void advance();
     void reset();
 
-    uint16_t calculateStepLength();
-    void updateStepLength();
-    void callback_ppqn();
     void handle_pulse(int pulse);
 
     void handleDefaultMode();

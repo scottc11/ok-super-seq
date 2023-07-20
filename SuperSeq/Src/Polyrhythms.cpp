@@ -1,42 +1,96 @@
 #include "Polyrhythms.h"
 
-int POLY_1_TARGETS[1];
-int POLY_2_TARGETS[2];
-int POLY_3_TARGETS[3];
-int POLY_4_TARGETS[4];
-int POLY_5_TARGETS[5];
+uint32_t POLYRHYTHMS[POLYRHYTHM_PULSES]; // 1536
+int DIVISORS[POLYRHYTHM_NUM_DIVISORS] = {128, 80, 64, 48, 32, 28, 24, 20, 16, 15, 14, 12, 8, 7, 6, 5, 4, 3, 2, 1};
 
-PolyArray POLY_1;
-PolyArray POLY_2;
-PolyArray POLY_3;
-PolyArray POLY_4;
-PolyArray POLY_5;
-
-PolyArray* POLYRHYTHMS[5];
-
-void init_polyrhythms()
+/**
+ * @brief This function determines the precise position of each polyrhrthms trigger position across
+ * a total of 16 clock steps (ie. PPQN * 16). It populates a pre-initialized array of 32-bit integers
+ * 
+ * Each bit in each 32-bit number in the array represents a boolean determining if a polyrhthym event occurs (at that pulse position)
+ * 
+ * @note: Since some of the polyrhythms create floats when they divide, you need to account for the
+ * error (over 1536 pulses, this error gets quite large and messes with the rhythm).
+ * The tempo clock doesn't use floats to count (it uses an int), you need to round any floats
+ */
+void calculate_polyrhythms()
 {
-    POLY_1 = {1, POLY_1_TARGETS};
-    POLY_2 = {2, POLY_2_TARGETS};
-    POLY_3 = {3, POLY_3_TARGETS};
-    POLY_4 = {4, POLY_4_TARGETS};
-    POLY_5 = {5, POLY_5_TARGETS};
-    calculate_polyrhythm(&POLY_1);
-    calculate_polyrhythm(&POLY_2);
-    calculate_polyrhythm(&POLY_3);
-    calculate_polyrhythm(&POLY_4);
-    calculate_polyrhythm(&POLY_5);
-    POLYRHYTHMS[0] = &POLY_1;
-    POLYRHYTHMS[1] = &POLY_2;
-    POLYRHYTHMS[2] = &POLY_3;
-    POLYRHYTHMS[3] = &POLY_4;
-    POLYRHYTHMS[4] = &POLY_5;
-}
-
-void calculate_polyrhythm(PolyArray *polyrhythm)
-{
-    for (int i = 0; i < polyrhythm->length; i++)
+    for (int i = 0; i < POLYRHYTHM_NUM_DIVISORS; i++)
     {
-        polyrhythm->triggers[i] = ((PPQN * 4 / polyrhythm->length) * i);
+        float divisor = DIVISORS[i];    // first get the divisor (ex. 80 ie. ((96 * 16) / 80))
+        float pulses = (float)(POLYRHYTHM_PULSES) / divisor; // then find the frequency (ie. every 19.2 pulses)
+        for (int x = 0; x < divisor; x++)
+        {
+            int index = x * pulses;
+            POLYRHYTHMS[index] = bitwise_set_bit(POLYRHYTHMS[index], i);
+        }
     }
 }
+
+
+
+/*
+
+division: 128  pulses: 12  remainder: 0  modulo: 0
+
+
+division: 80  pulses: 19.2  remainder: 16  modulo: 16
+
+
+division: 64  pulses: 24  remainder: 0  modulo: 0
+
+
+division: 48  pulses: 32  remainder: 0  modulo: 0
+
+
+division: 32  pulses: 48  remainder: 0  modulo: 0
+
+
+division: 28  pulses: 54  remainder: 24  modulo: 24
+
+
+division: 24  pulses: 64  remainder: 0  modulo: 0
+
+
+division: 20  pulses: 76  remainder: 16  modulo: 16
+
+
+division: 16  pulses: 96  remainder: 0  modulo: 0
+
+
+division: 15  pulses: 102  remainder: 6  modulo: 6
+
+
+division: 14  pulses: 109  remainder: 10  modulo: 10
+
+
+division: 12  pulses: 128  remainder: 0  modulo: 0
+
+
+division: 8  pulses: 192  remainder: 0  modulo: 0
+
+
+division: 7  pulses: 219  remainder: 3  modulo: 3  // meh
+
+
+division: 6  pulses: 256  remainder: 0  modulo: 0
+
+
+division: 5  pulses: 307  remainder: 1  modulo: 1 // might be cool
+
+
+division: 4  pulses: 384  remainder: 0  modulo: 0
+
+
+division: 3  pulses: 512  remainder: 0  modulo: 0
+
+
+division: 2  pulses: 768  remainder: 0  modulo: 0
+
+
+division: 1  pulses: 1536  remainder: 0  modulo: 0
+
+
+((96 * 16) / 20) * 5 = 384
+
+*/

@@ -67,7 +67,7 @@ void SeqControl::advanceAll() {
         pulse++;
     } else {
         pulse = 0;
-        if (step < 3) {
+        if (step < 15) {
             step++;
         } else {
             step = 0;

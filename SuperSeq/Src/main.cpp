@@ -57,13 +57,13 @@ void task_main(void *pvParameters)
 
     HAL_Delay(10);
 
+    calculate_polyrhythms();
+
     controller.init();
 
     handle_gpio_interrupt(&gpio1, true);
     handle_gpio_interrupt(&gpio2, true);
     handle_gpio_interrupt(&gpio3, true);
-
-    init_polyrhythms();
 
     while (1)
     {
