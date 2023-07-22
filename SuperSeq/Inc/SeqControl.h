@@ -35,7 +35,7 @@ public:
 
     MPR121 *touch_pads;
     Sequence *channels[4];
-    
+
     bool globalPlayback;
 
     int pulse;
@@ -49,6 +49,7 @@ public:
     void tpResetHandler();
     
     void advanceAll();
+    void resetAll();
 
     void setRunLED(bool state);
 

@@ -75,6 +75,15 @@ void SeqControl::advanceAll() {
     }
 }
 
+void SeqControl::resetAll() {
+    pulse = 0;
+    step = 0;
+    for (int i = 0; i < NUM_CHANNELS; i++)
+    {
+        channels[i]->reset();
+    }
+}
+
 void SeqControl::handleTouchInterrupt()
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -223,11 +232,8 @@ void SeqControl::handleRunButtonPress(int state)
  */
 void SeqControl::handleResetButtonPress(int state)
 {
-    for (int i = 0; i < NUM_CHANNELS; i++)
-    {
-        if (state == LOW) {
-            channels[i]->reset();
-        }
+    if (state == LOW) {
+        this->resetAll();
     }
 }
 

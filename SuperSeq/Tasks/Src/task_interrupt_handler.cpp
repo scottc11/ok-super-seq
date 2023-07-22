@@ -48,7 +48,7 @@ void task_interrupt_handler(void *params)
             controller->advanceAll();
             break;
         case ISR_ID_TP_RESET:
-            controller->handleResetButtonPress(LOW);
+            controller->resetAll();
             break;
         default:
             break;
