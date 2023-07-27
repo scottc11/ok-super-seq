@@ -20,9 +20,11 @@ void Sequence::setPlaybackMode(PlaybackMode mode) {
     pbMode = mode;
     playback = true;
     clearLEDs();
+    activateStep(currStep, prevStep);
     switch (pbMode)
     {
     case PlaybackMode::DEFAULT:
+        direction = FORWARD;
         break;
     case PlaybackMode::PINGPONG:
         direction = FORWARD;
@@ -83,12 +85,43 @@ void Sequence::handle_pulse(int pulse)
     }
     currPulse = pulse;
 
-    if (bitwise_read_bit(POLYRHYTHMS[pulse], divisorIndex))
-    {
-        if (playback)
+    if (playback) {
+        for (int i = 0; i < num_triggers(pulse); i++)
         {
             advance();
         }
+    }
+}
+
+int Sequence::num_triggers(int pulse) {
+    int trigger_count = 0;
+    if (bitwise_read_bit(POLYRHYTHMS[pulse], divisorIndex)) {
+        trigger_count += 1;
+    }
+    if (clockModSource)
+    {
+        trigger_count += clockModSource->num_triggers(pulse);
+    }
+    return trigger_count;
+}
+
+/**
+ * @brief Recursive function which checks if that channel, or any of its mod sources, has an event at the currPulse
+ *
+ */
+bool Sequence::has_event(int pulse)
+{
+    if (bitwise_read_bit(POLYRHYTHMS[pulse], divisorIndex))
+    {
+        return true;
+    }
+    else if (clockModSource && clockModSource->has_event(pulse))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -104,25 +137,20 @@ void Sequence::advance() {
     timeStamp = currPulse;
     if (override == false && pbMode != PlaybackMode::TOUCH)
     {
-        if (currStep == 0 && prevStep == 0) {
+        if (currStep == 0 && prevStep == 0) { // this should probably get moved to init?
             prevStep = length - 1;
         }
         activateStep(currStep, prevStep);
     }
 
-    if (clockTarget != NULL)
-    {
-        clockTarget->advance();
-    }
-
     clockOut.write(1);
-
+    
     prevStep = currStep;
 
     switch (pbMode)
     {
     case PlaybackMode::DEFAULT:
-        handleDefaultMode();
+        handlePingPongMode();
         break;
     case PlaybackMode::PINGPONG:
         handlePingPongMode();
@@ -145,14 +173,7 @@ void Sequence::reset() {
     activateStep(currStep, prevStep);
 }
 
-void Sequence::handleDefaultMode() {
-    if (currStep >= length - 1) {
-        currStep = 0;
-    } else {
-        currStep++;
-    }
-}
-
+// this function needs to become the default mode function. Its already setup for it.
 void Sequence::handlePingPongMode() {
     if (direction == FORWARD)
     {
@@ -206,6 +227,7 @@ void Sequence::handlePedalMode() {
 void Sequence::handleTouchedStep(int step)
 {
     prevTouchedStep = currTouchedStep;
+    prevStep = prevTouchedStep;
     currTouchedStep = step;
     clearLEDs();
     activateStep(currTouchedStep, currStep);
@@ -226,7 +248,8 @@ void Sequence::handleReleasedStep(int step)
 }
 
 void Sequence::activateStep(int curr, int prev) {
-    mux.activateChannel(curr);
+    // modifyTargetSequence();
+    mux.activateChannel(curr); // your going to have to do a short delay after this to give time for the ADC to settle
     setLED(prev, 0);
     setLED(curr, 127);
 }
@@ -246,10 +269,47 @@ void Sequence::clearLEDs() {
 
 void Sequence::setClockTarget(Sequence *target)
 {
-    clockTarget = target;
+    clockModSource = target;
 }
 
 void Sequence::clearClockTarget()
 {
-    clockTarget = nullptr;
+    clockModSource = nullptr;
+}
+
+void Sequence::setModTarget(Sequence *target)
+{
+    playbackModSource = target;
+}
+
+void Sequence::clearModTarget()
+{
+    playbackModSource = nullptr;
+}
+
+
+void Sequence::handleModificationSource()
+{
+    if (playbackModSource != nullptr)
+    {
+        uint16_t val = playbackModSource->adc.read_u16();
+        if (val < BIT_MAX_16 / 4)
+        {
+            this->setDirection(Direction::FORWARD);
+        }
+        else if (val < BIT_MAX_16 / 2)
+        {
+            // reverse
+            this->setDirection(Direction::BACKWARD);
+        }
+        else if (val < (BIT_MAX_16 / 2) + (BIT_MAX_16 / 4))
+        {
+            // reset?
+            this->reset();
+        }
+        else
+        {
+            // freeze
+        }
+    }
 }

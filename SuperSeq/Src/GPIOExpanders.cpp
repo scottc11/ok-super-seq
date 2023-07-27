@@ -156,19 +156,17 @@ void gpio1_handler(int pin, int state)
     switch (pin)
     {
     case GPIO1::CS_B_UP:
-        controller.handleClockSwitch(2, 1, state, bitwise_read_bit(gpio1.currPinStates, CS_B_DOWN));
+        controller.handleClockSwitch(1, 2, state, bitwise_read_bit(gpio1.currPinStates, CS_B_DOWN));
         break;
 
     case GPIO1::CS_B_DOWN:
-        controller.handleClockSwitch(1, 2, state, bitwise_read_bit(gpio1.currPinStates, CS_B_UP));
+        controller.handleClockSwitch(2, 1, state, bitwise_read_bit(gpio1.currPinStates, CS_B_UP));
         break;
 
     case GPIO1::MS_B_UP:
-        
         break;
 
     case GPIO1::MS_B_DOWN:
-        
         break;
 
     case GPIO1::SW3_POS4:
@@ -239,19 +237,21 @@ void gpio2_handler(int pin, int state)
         break;
 
     case GPIO2::CS_A_UP:
-        controller.handleClockSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, CS_A_UP));
+        controller.handleClockSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, CS_A_UP));
         break;
 
     case GPIO2::CS_A_DOWN:
-        controller.handleClockSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, CS_A_DOWN));
+        controller.handleClockSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, CS_A_DOWN));
         break;
 
     case GPIO2::MS_A_UP:
         // channel 1 mods channel 0
+        controller.handleModSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, MS_A_DOWN));
         break;
 
     case GPIO2::MS_A_DOWN:
         // channel 0 mods channel 1
+        controller.handleModSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, MS_A_UP));
         break;
 
     case GPIO2::ENC2_BTN:
@@ -301,11 +301,11 @@ void gpio3_handler(int pin, int state)
         break;
 
     case GPIO3::CS_C_UP:
-        controller.handleClockSwitch(3, 2, state, bitwise_read_bit(gpio3.currPinStates, CS_C_DOWN));
+        controller.handleClockSwitch(2, 3, state, bitwise_read_bit(gpio3.currPinStates, CS_C_DOWN));
         break;
 
     case GPIO3::CS_C_DOWN:
-        controller.handleClockSwitch(2, 3, state, bitwise_read_bit(gpio3.currPinStates, CS_C_UP));
+        controller.handleClockSwitch(3, 2, state, bitwise_read_bit(gpio3.currPinStates, CS_C_UP));
         break;
 
     case GPIO3::SW4_POS4:

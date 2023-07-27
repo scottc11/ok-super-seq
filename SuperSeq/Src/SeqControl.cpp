@@ -55,10 +55,9 @@ void SeqControl::advanceAll() {
 
     if (!waitForClock)
     {
+        int mod_pulse = pulse + ((PPQN * step));
         for (int i = 0; i < 4; i++)
         {
-            // channels[i]->callback_ppqn();
-            int mod_pulse = pulse + ((PPQN * step));
             channels[i]->handle_pulse(mod_pulse);
         }
     }
@@ -239,31 +238,34 @@ void SeqControl::handleResetButtonPress(int state)
 
 /**
  * @brief 
- * 
- * @param id 1, 2, or 3 == A, B, C
  */
-void SeqControl::handleClockSwitch(int masterIndex, int slaveIndex, int state, int other_pin)
+void SeqControl::handleClockSwitch(int targetIndex, int sourceIndex, int state, int other_pin)
 {
     if (state == LOW) {
-        channels[masterIndex]->setClockTarget(controller.channels[slaveIndex]);
+        channels[targetIndex]->setClockTarget(channels[sourceIndex]);
     } else {
         if (state == HIGH && other_pin == HIGH)
         {
             // neutral position
-            channels[masterIndex]->clearClockTarget();
-            channels[slaveIndex]->clearClockTarget();
+            channels[targetIndex]->clearClockTarget();
+            channels[sourceIndex]->clearClockTarget();
         }
     }
 }
 
 /**
  * @brief
- *
- * @param id 1, 2, or 3 == A, B, C
  */
-void SeqControl::handleModSwitch(int id)
+void SeqControl::handleModSwitch(int targetIndex, int sourceIndex, int state, int other_pin)
 {
-
+    if (state == LOW) {
+        channels[targetIndex]->setModTarget(channels[sourceIndex]);
+    } else {
+        if (state == HIGH && other_pin == HIGH) {
+            channels[targetIndex]->clearModTarget();
+            channels[sourceIndex]->clearModTarget();
+        }
+    }
 }
 
 void SeqControl::setRunLED(bool state)

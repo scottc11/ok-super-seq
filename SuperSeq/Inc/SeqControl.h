@@ -63,6 +63,6 @@ public:
     void handleRunButtonPress(int state);
     void handleResetButtonPress(int state);
     void handleSlideSwitch(int channel, int position, int state);
-    void handleClockSwitch(int masterIndex, int slaveIndex, int state, int other_pin);
-    void handleModSwitch(int id);
+    void handleClockSwitch(int targetIndex, int sourceIndex, int state, int other_pin);
+    void handleModSwitch(int targetIndex, int sourceIndex, int state, int other_pin);
 };

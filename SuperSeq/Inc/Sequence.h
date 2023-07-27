@@ -30,7 +30,7 @@ public:
         PinName trig_pin,
         PinName mux_sel_a,
         PinName mux_sel_b,
-        PinName mux_sel_c) : adc(adc_pin), clockOut(trig_pin), mux(mux_sel_a, mux_sel_b, mux_sel_c), clockTarget(nullptr)
+        PinName mux_sel_c) : adc(adc_pin), clockOut(trig_pin), mux(mux_sel_a, mux_sel_b, mux_sel_c), clockModSource(nullptr), playbackModSource(nullptr)
     {
         leds = leds_ptr;
         index = _index;
@@ -51,7 +51,8 @@ public:
     PlaybackMode pbMode;
     bool direction;
 
-    Sequence *clockTarget;
+    Sequence *clockModSource;
+    Sequence *playbackModSource;
     int timeStamp;
 
     int divisorIndex = 8;
@@ -75,6 +76,9 @@ public:
 
     void setClockTarget(Sequence *target);
     void clearClockTarget();
+    void setModTarget(Sequence *target);
+    void clearModTarget();
+    void handleModificationSource();
 
     void start();
     void stop();
@@ -82,8 +86,9 @@ public:
     void reset();
 
     void handle_pulse(int pulse);
+    bool has_event(int pulse);
+    int num_triggers(int pulse);
 
-    void handleDefaultMode();
     void handlePingPongMode();
     void handlePedalMode();
 
