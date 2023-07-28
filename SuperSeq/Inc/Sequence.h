@@ -6,6 +6,7 @@
 #include "CD4051.h"
 #include "IS31FL3246.h"
 #include "Polyrhythms.h"
+#include "task_handles.h"
 
 class Sequence {
 public:
@@ -86,6 +87,7 @@ public:
     void reset();
 
     void handle_pulse(int pulse);
+    void handle_down_pulse(int pulse);
     bool has_event(int pulse);
     int num_triggers(int pulse);
 

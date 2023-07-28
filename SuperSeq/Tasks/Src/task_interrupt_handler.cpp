@@ -45,10 +45,10 @@ void task_interrupt_handler(void *params)
             // controller->waitForClock = false;
             break;
         case ISR_ID_TP_PULSE:
-            controller->advanceAll();
+            // controller->advanceAll();
             break;
         case ISR_ID_TP_RESET:
-            controller->resetAll();
+            // controller->resetAll();
             break;
         default:
             break;

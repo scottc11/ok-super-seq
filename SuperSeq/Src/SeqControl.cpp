@@ -13,6 +13,7 @@ void SeqControl::init() {
 
     ext_step_int.rise(callback(this, &SeqControl::tpStepHandler));
     ext_pulse_int.rise(callback(this, &SeqControl::tpPulseHandler));
+    ext_pulse_int.fall(callback(this, &SeqControl::tpPulseFallHandler));
     tp_reset_int.rise(callback(this, &SeqControl::tpResetHandler));
 
     
@@ -32,17 +33,16 @@ void SeqControl::tpStepHandler() {
 
 void SeqControl::tpPulseHandler()
 {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    uint8_t isr_id = ISR_ID_TP_PULSE;
-    xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    dispatch_sequence_event_ISR(5, ACTION::PULSE);
+}
+
+void SeqControl::tpPulseFallHandler()
+{
+    dispatch_sequence_event_ISR(88, ACTION::ADVANCE);
 }
 
 void SeqControl::tpResetHandler() {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    uint8_t isr_id = ISR_ID_TP_RESET;
-    xQueueSendFromISR(qh_interrupt_queue, &isr_id, &xHigherPriorityTaskWoken);
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    dispatch_sequence_event_ISR(5, ACTION::RESET);
 }
 
 void SeqControl::advanceAll() {
@@ -55,10 +55,10 @@ void SeqControl::advanceAll() {
 
     if (!waitForClock)
     {
-        int mod_pulse = pulse + ((PPQN * step));
+        position = pulse + ((PPQN * step));
         for (int i = 0; i < 4; i++)
         {
-            channels[i]->handle_pulse(mod_pulse);
+            channels[i]->handle_pulse(position);
         }
     }
 

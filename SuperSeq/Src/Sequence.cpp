@@ -10,7 +10,7 @@ int CHANNEL_LED_PINS[4][8] = {
 };
 
 void Sequence::init() {
-    adc.setFilter(0.1);
+    adc.setFilter(0.9);
     playback = true;
     playback = true;
     setPlaybackMode(pbMode); // interrupts trigger this function on startup, so re-calling it ensure all the settings are correct for each mode;
@@ -86,8 +86,28 @@ void Sequence::handle_pulse(int pulse)
     currPulse = pulse;
 
     if (playback) {
+        if (has_event(pulse))
+        {
+            timeStamp = currPulse;
+            if (override == false && pbMode != PlaybackMode::TOUCH)
+            {
+                if (currStep == 0 && prevStep == 0)
+                { // this should probably get moved to init?
+                    prevStep = length - 1;
+                }
+                activateStep(currStep, prevStep);
+            }
+            clockOut.write(1);
+        }
+    }
+}
+
+void Sequence::handle_down_pulse(int pulse)
+{
+    if (playback) {
         for (int i = 0; i < num_triggers(pulse); i++)
         {
+            handleModificationSource();
             advance();
         }
     }
@@ -134,17 +154,6 @@ void Sequence::stop() {
 }
 
 void Sequence::advance() {
-    timeStamp = currPulse;
-    if (override == false && pbMode != PlaybackMode::TOUCH)
-    {
-        if (currStep == 0 && prevStep == 0) { // this should probably get moved to init?
-            prevStep = length - 1;
-        }
-        activateStep(currStep, prevStep);
-    }
-
-    clockOut.write(1);
-    
     prevStep = currStep;
 
     switch (pbMode)
@@ -293,18 +302,21 @@ void Sequence::handleModificationSource()
     if (playbackModSource != nullptr)
     {
         uint16_t val = playbackModSource->adc.read_u16();
-        if (val < BIT_MAX_16 / 4)
+        if (val < BIT_MAX_16 / 4) // 16,383.75
         {
             this->setDirection(Direction::FORWARD);
         }
-        else if (val < BIT_MAX_16 / 2)
+        else if (val < BIT_MAX_16 / 2) // 32,767.5
         {
             // reverse
             this->setDirection(Direction::BACKWARD);
         }
         else if (val < (BIT_MAX_16 / 2) + (BIT_MAX_16 / 4))
         {
-            // reset?
+            // reset is odd because once you come to a reset step, you just want to reset the
+            // target sequence, and then have the target sequence continue progressing (otherwise this would be very similar to a 'freeze' event)
+            // you need to set a flag on source sequence when a reset occurs, and then only
+            // reset that flag when the source sequence progresses to its next step
             this->reset();
         }
         else

@@ -23,7 +23,6 @@
                 "${workspaceFolder}/SuperSeq/Src/**",
                 "${workspaceFolder}/SuperSeq/Tasks/Inc/**",
                 "${workspaceFolder}/SuperSeq/Tasks/Src/**"
-
             ],
             "defines": [
                 "USE_HAL_DRIVER",

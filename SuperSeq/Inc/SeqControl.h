@@ -1,11 +1,13 @@
 #pragma once
 
 #include "main.h"
-#include "tasks.h"
+#include "task_handles.h"
 #include "MPR121.h"
 #include "MCP23017.h"
 #include "Sequence.h"
 #include "GPIOExpanders.h"
+
+class Sequence; // forward declaration
 
 static const int TOUCH_PAD_MAP[12] = {7, 6, 5, 4, 3, 2, 1, 0, 3, 2, 1, 0};
 
@@ -39,6 +41,7 @@ public:
     bool globalPlayback;
 
     int pulse;
+    int position; // relative position in polyrhythm array
     int step;
     bool waitForClock;
 
@@ -46,6 +49,7 @@ public:
     
     void tpStepHandler();
     void tpPulseHandler();
+    void tpPulseFallHandler();
     void tpResetHandler();
     
     void advanceAll();

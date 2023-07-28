@@ -1,7 +1,7 @@
 #pragma once
 
 #include "main.h"
-#include "tasks.h"
+#include "task_handles.h"
 #include "logger.h"
 #include "GPIOExpanders.h"
 #include "MCP23017.h"

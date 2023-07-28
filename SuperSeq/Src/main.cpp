@@ -1,5 +1,5 @@
 #include "main.h"
-#include "tasks.h"
+#include "task_handles.h"
 #include "tim_api.h"
 #include "logger.h"
 #include "Callback.h"
@@ -79,8 +79,9 @@ int main(void) {
     AnalogHandle::initialize();
     HAL_Delay(100);
 
+    xTaskCreate(task_sequence_handler, "Seq handler", RTOS_STACK_SIZE_MAX, &controller, RTOS_PRIORITY_HIGH + 1, &th_sequence_handler);
+    xTaskCreate(task_interrupt_handler, "ISR handler", RTOS_STACK_SIZE_MIN, &controller, RTOS_PRIORITY_HIGH + 1, &th_interrupt_handler);
     xTaskCreate(task_main, "task_main", 512, NULL, 1, &th_main);
-    xTaskCreate(task_interrupt_handler, "ISR handler", RTOS_STACK_SIZE_MAX, &controller, RTOS_PRIORITY_HIGH + 1, NULL);
 
     vTaskStartScheduler();
 
