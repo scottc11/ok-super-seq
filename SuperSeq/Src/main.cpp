@@ -10,7 +10,6 @@
 #include "MPR121.h"
 #include "MCP23017.h"
 #include "CD4051.h"
-#include "SX1509.h"
 #include "SeqControl.h"
 #include "Sequence.h"
 #include "Polyrhythms.h"
