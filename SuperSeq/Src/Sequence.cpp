@@ -96,12 +96,19 @@ void Sequence::handle_pulse(int pulse)
                     prevStep = length - 1;
                 }
                 activateStep(currStep, prevStep);
+                resetOccured = false;
             }
             clockOut.write(1);
         }
     }
 }
 
+/**
+ * @brief The down pulse is when we read the ADC of a modification source, should there be one, as well
+ * as advance the sequence if there is a trigger
+ * 
+ * @param pulse 
+ */
 void Sequence::handle_down_pulse(int pulse)
 {
     if (playback) {
@@ -257,9 +264,9 @@ void Sequence::handleReleasedStep(int step)
 }
 
 void Sequence::activateStep(int curr, int prev) {
-    // modifyTargetSequence();
-    mux.activateChannel(curr); // your going to have to do a short delay after this to give time for the ADC to settle
-    setLED(prev, 0);
+    mux.activateChannel(curr);
+    setLED(lastStepIlluminated, 0);
+    lastStepIlluminated = curr;
     setLED(curr, 127);
 }
 
@@ -317,7 +324,10 @@ void Sequence::handleModificationSource()
             // target sequence, and then have the target sequence continue progressing (otherwise this would be very similar to a 'freeze' event)
             // you need to set a flag on source sequence when a reset occurs, and then only
             // reset that flag when the source sequence progresses to its next step
-            this->reset();
+            if (!playbackModSource->resetOccured) {
+                this->reset();
+                playbackModSource->resetOccured = true;
+            }
         }
         else
         {

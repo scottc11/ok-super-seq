@@ -51,6 +51,7 @@ public:
     bool playback;
     PlaybackMode pbMode;
     bool direction;
+    bool resetOccured; // flag for sequence mod reset logic
 
     Sequence *clockModSource;
     Sequence *playbackModSource;
@@ -63,6 +64,7 @@ public:
     int prevStep;
     int currPedalStep;
     int prevPedalStep;
+    uint8_t lastStepIlluminated; // index of the LED which was last turned ON
     uint8_t length;      // how long the sequence is in steps (max 8, min 1)
     
     int currTouchedStep;
