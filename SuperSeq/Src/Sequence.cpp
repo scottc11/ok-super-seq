@@ -72,6 +72,15 @@ void Sequence::setRhythm(int value) {
     }
 }
 
+void Sequence::setLength(int value) {
+    if (value > 8 || value < 1) {
+        return;
+    }
+    length = value;
+    clearLEDs();
+    drawLength();
+}
+
 /**
  * @brief triggers once for every PPQN
  *
@@ -193,7 +202,7 @@ void Sequence::reset() {
 void Sequence::handlePingPongMode() {
     if (direction == FORWARD)
     {
-        if (currStep == (length - 1))
+        if (currStep >= (length - 1))
         {
             if (pbMode == PlaybackMode::PINGPONG)
             {
@@ -211,7 +220,7 @@ void Sequence::handlePingPongMode() {
     }
     else
     {
-        if (currStep == 0)
+        if (currStep <= 0)
         {
 
             if (pbMode == PlaybackMode::PINGPONG)
@@ -225,7 +234,11 @@ void Sequence::handlePingPongMode() {
         }
         else
         {
-            currStep--;
+            if (currStep <= length - 1) {
+                currStep--;
+            } else {
+                currStep = length - 1;
+            }
         }
     }
 }
@@ -263,11 +276,19 @@ void Sequence::handleReleasedStep(int step)
     }
 }
 
+/**
+ * @brief main function for handling output of the sequence
+ * 
+ * @param curr 
+ * @param prev 
+ */
 void Sequence::activateStep(int curr, int prev) {
     mux.activateChannel(curr);
-    setLED(lastStepIlluminated, 0);
-    lastStepIlluminated = curr;
-    setLED(curr, 127);
+    if (!settingLength) {
+        setLED(lastStepIlluminated, 0);
+        lastStepIlluminated = curr;
+        setLED(curr, 127);
+    }
 }
 
 void Sequence::setLED(int step, int pwm)
@@ -281,6 +302,14 @@ void Sequence::clearLEDs() {
         setLED(i, 0);
     }
     
+}
+
+void Sequence::drawLength()
+{
+    for (int i = 0; i < length; i++)
+    {
+        setLED(i, 20);
+    }
 }
 
 void Sequence::setClockTarget(Sequence *target)

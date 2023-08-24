@@ -61,6 +61,8 @@ public:
     void onTouch(uint8_t pad);
     void onRelease(uint8_t pad);
 
+    void activateLengthMode(bool activate);
+
     void handleEncoder(int channel, int bit_position, uint16_t pin_states);
     void handleEncoderButton(int channel, int state);
     void handleAltButtonPress(int state);

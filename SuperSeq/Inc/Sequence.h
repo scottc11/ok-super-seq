@@ -52,6 +52,7 @@ public:
     PlaybackMode pbMode;
     bool direction;
     bool resetOccured; // flag for sequence mod reset logic
+    bool settingLength;
 
     Sequence *clockModSource;
     Sequence *playbackModSource;
@@ -75,6 +76,7 @@ public:
     void setPlaybackMode(PlaybackMode mode);
     void setDirection(Direction _direction);
     void setRhythm(int value);
+    void setLength(int value);
     void syncRhythmWithMaster();
 
     void setClockTarget(Sequence *target);
@@ -103,4 +105,5 @@ public:
 
     void setLED(int step, int pwm);
     void clearLEDs();
+    void drawLength();
 };

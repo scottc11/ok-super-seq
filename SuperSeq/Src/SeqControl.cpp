@@ -153,15 +153,27 @@ void SeqControl::handleEncoder(int channel, int bit_position, uint16_t pin_state
     int enc_chan_a_state = bitwise_read_bit(pin_states, bit_position);
     int enc_chan_b_state = bitwise_read_bit(pin_states, bit_position + 1);
 
-    if (enc_chan_a_state == 0 && enc_chan_b_state == 1)
+    if (enc_chan_a_state == 0 && enc_chan_b_state == 1) // direction right
     {
-        // direction right
-        channels[channel]->setRhythm(-1);
+        if (channels[channel]->settingLength)
+        {
+            channels[channel]->setLength( channels[channel]->length + 1 );
+        }
+        else
+        {
+            channels[channel]->setRhythm(-1);
+        }
     }
-    else if (enc_chan_a_state == 0 && enc_chan_b_state == 0)
+    else if (enc_chan_a_state == 0 && enc_chan_b_state == 0) // direction left
     {
-        // direction left
-        channels[channel]->setRhythm(1);
+        if (channels[channel]->settingLength)
+        {
+            channels[channel]->setLength( channels[channel]->length - 1 );
+        }
+        else
+        {
+            channels[channel]->setRhythm(1);
+        }
     }
 }
 
@@ -202,7 +214,11 @@ void SeqControl::handleSlideSwitch(int channel, int position, int state)
 
 void SeqControl::handleAltButtonPress(int state)
 {
-
+    if (state == LOW) {
+        activateLengthMode(true); // enable length setting mode
+    } else {
+        activateLengthMode(false); // disable length setting mode
+    }
 }
 
 void SeqControl::handleRunButtonPress(int state)
@@ -273,4 +289,22 @@ void SeqControl::setRunLED(bool state)
     int currState = gpio3.digitalRead(MCP23017_PORTB);
     currState = bitwise_write_bit(currState, GPIO3::RUN_LED - 8, state);
     gpio3.digitalWrite(MCP23017_PORTB, currState);
+}
+
+void SeqControl::activateLengthMode(bool activate)
+{
+    if (activate) {
+        for (int i = 0; i < 4; i++)
+        {
+            channels[i]->settingLength = true;
+            channels[i]->drawLength();
+        }
+    } else {
+        for (int i = 0; i < 4; i++)
+        {
+            channels[i]->settingLength = false;
+            channels[i]->clearLEDs();
+            channels[i]->activateStep(channels[i]->currStep, channels[i]->prevStep);
+        }
+    }
 }
