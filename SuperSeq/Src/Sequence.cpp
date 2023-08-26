@@ -12,7 +12,6 @@ int CHANNEL_LED_PINS[4][8] = {
 void Sequence::init() {
     adc.setFilter(0.9);
     playback = true;
-    playback = true;
     setPlaybackMode(pbMode); // interrupts trigger this function on startup, so re-calling it ensure all the settings are correct for each mode;
 }
 
@@ -120,10 +119,10 @@ void Sequence::handle_pulse(int pulse)
  */
 void Sequence::handle_down_pulse(int pulse)
 {
+    handleModificationSource();
     if (playback) {
         for (int i = 0; i < num_triggers(pulse); i++)
         {
-            handleModificationSource();
             advance();
         }
     }
@@ -255,9 +254,7 @@ void Sequence::handlePedalMode() {
 void Sequence::handleTouchedStep(int step)
 {
     prevTouchedStep = currTouchedStep;
-    prevStep = prevTouchedStep;
     currTouchedStep = step;
-    clearLEDs();
     activateStep(currTouchedStep, currStep);
     if (!playback) {
         clockOut.write(1);
@@ -338,6 +335,7 @@ void Sequence::handleModificationSource()
     if (playbackModSource != nullptr)
     {
         uint16_t val = playbackModSource->adc.read_u16();
+        playback = true;
         if (val < BIT_MAX_16 / 4) // 16,383.75
         {
             this->setDirection(Direction::FORWARD);
@@ -360,7 +358,8 @@ void Sequence::handleModificationSource()
         }
         else
         {
-            // freeze
+            // freeze stops both the sequence playback AND clock out
+            playback = false;
         }
     }
 }
