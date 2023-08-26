@@ -28,8 +28,8 @@ enum GPIO1
 {
     CS_B_DOWN,
     CS_B_UP,
-    MS_B_UP,
     MS_B_DOWN,
+    MS_B_UP,
     SW3_POS4,
     SW3_POS3,
     SW3_POS2,
@@ -66,8 +66,8 @@ enum GPIO2
 
 enum GPIO3
 {
-    MS_C_UP,
     MS_C_DOWN,
+    MS_C_UP,
     CS_C_DOWN,
     CS_C_UP,
     SW4_POS4,

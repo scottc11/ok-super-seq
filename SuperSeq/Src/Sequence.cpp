@@ -330,6 +330,7 @@ void Sequence::setModTarget(Sequence *target)
 void Sequence::clearModTarget()
 {
     playbackModSource = nullptr;
+    setPlaybackMode(pbMode); // ensures direction is accurate
 }
 
 

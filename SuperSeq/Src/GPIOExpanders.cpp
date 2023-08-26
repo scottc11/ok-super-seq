@@ -164,9 +164,13 @@ void gpio1_handler(int pin, int state)
         break;
 
     case GPIO1::MS_B_UP:
+        // channel 2 mods channel 1
+        controller.handleModSwitch(1, 2, state, bitwise_read_bit(gpio1.currPinStates, MS_B_DOWN));
         break;
 
     case GPIO1::MS_B_DOWN:
+        // channel 1 mods channel 2
+        controller.handleModSwitch(2, 1, state, bitwise_read_bit(gpio1.currPinStates, MS_B_UP));
         break;
 
     case GPIO1::SW3_POS4:
@@ -293,11 +297,13 @@ void gpio3_handler(int pin, int state)
     switch (pin)
     {
     case GPIO3::MS_C_UP:
-        
+        // channel 3 mods channel 2
+        controller.handleModSwitch(2, 3, state, bitwise_read_bit(gpio3.currPinStates, MS_C_DOWN));
         break;
 
     case GPIO3::MS_C_DOWN:
-        
+        // channel 2 mods channel 3
+        controller.handleModSwitch(3, 2, state, bitwise_read_bit(gpio3.currPinStates, MS_C_UP));
         break;
 
     case GPIO3::CS_C_UP:
