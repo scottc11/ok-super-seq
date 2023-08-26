@@ -194,7 +194,6 @@ void Sequence::reset() {
     prevStep = currStep;
     currStep = 0;
     currPedalStep = 0;
-    clearLEDs();
     activateStep(currStep, prevStep);
 }
 
