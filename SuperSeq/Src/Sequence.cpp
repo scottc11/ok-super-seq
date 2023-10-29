@@ -15,6 +15,10 @@ void Sequence::init() {
     setPlaybackMode(pbMode); // interrupts trigger this function on startup, so re-calling it ensure all the settings are correct for each mode;
 }
 
+void Sequence::select(bool select) {
+    selected = select;
+}
+
 void Sequence::setPlaybackMode(PlaybackMode mode) {
     pbMode = mode;
     playback = true;

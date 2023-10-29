@@ -71,8 +71,11 @@ public:
     int currTouchedStep;
     int prevTouchedStep;
     bool override;
+    bool selected;
 
     void init();
+    void select(bool select);
+
     void setPlaybackMode(PlaybackMode mode);
     void setDirection(Direction _direction);
     void setRhythm(int value);

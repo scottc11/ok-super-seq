@@ -44,6 +44,7 @@ public:
     int position; // relative position in polyrhythm array
     int step;
     bool waitForClock;
+    uint8_t selectedChannels;
 
     void init();
     

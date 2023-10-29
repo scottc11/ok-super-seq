@@ -1,5 +1,7 @@
 #include "SeqControl.h"
 
+int PAD_MAP[12] = {0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 1, 0};
+
 void SeqControl::init() {
 
     // initialize channel touch pads
@@ -111,9 +113,19 @@ void SeqControl::onTouch(uint8_t pad)
 
             // touch-release needs to snap back to the most recently touched pad (thatis still touched)
 
-            channels[i]->override = true;
-            channels[i]->handleTouchedStep(touchedStep);
+            if (selectedChannels != 0) {
+                if (channels[i]->selected) {
+                    channels[i]->override = true;
+                    channels[i]->handleTouchedStep(touchedStep);
+                }
+            } else {
+                channels[i]->override = true;
+                channels[i]->handleTouchedStep(touchedStep);
+            }
         }
+    } else {
+        channels[PAD_MAP[pad]]->select(true);
+        selectedChannels = bitwise_set_bit(selectedChannels, PAD_MAP[pad]);
     }
     
 }
@@ -124,20 +136,19 @@ void SeqControl::onRelease(uint8_t pad)
         int touchedStep = TOUCH_PAD_MAP[pad];
         for (int i = 0; i < NUM_CHANNELS; i++)
         {
-            if (touch_pads->padIsTouched()) {
-                // if a pad is still touched, we want to snap back to the last touched pad
-                // if more than 2 pads touched, how do we know which was the last touched?
-                // you will need to create an array to hold all the curr touched pads, in the order they were touched
-                // [4, 5, 6, 0, 0, 0, 0, 0]
-
-                // channels[i]->activateStep(channels[i]->prevTouchedStep, channels[i]->currTouchedStep);
-                
+            if (selectedChannels != 0) {
+                if (channels[i]->selected) {
+                    channels[i]->handleReleasedStep(touchedStep);
+                    channels[i]->override = false;
+                }
             } else {
-                // snap back to currStep
                 channels[i]->handleReleasedStep(touchedStep);
                 channels[i]->override = false;
             }
         }
+    } else {
+        channels[PAD_MAP[pad]]->select(false);
+        selectedChannels = bitwise_clear_bit(selectedChannels, PAD_MAP[pad]);
     }
 }
 
