@@ -30,6 +30,9 @@ void task_sequence_handler(void *params)
             break;
         case ACTION::MODIFY:
             break;
+        case ACTION::RESET_ARM:
+            controller->resetArmed = true;
+            break;
         case ACTION::RESET:
             controller->resetAll();
             break;

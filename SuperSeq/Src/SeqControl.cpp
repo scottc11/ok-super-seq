@@ -68,6 +68,13 @@ void SeqControl::advanceAll() {
         pulse++;
     } else {
         pulse = 0;
+        
+        // if reset armed, reset all sequences
+        if (resetArmed) {
+            dispatch_sequence_event(5, ACTION::RESET);
+            resetArmed = false;
+        }
+        
         if (step < 15) {
             step++;
         } else {
@@ -253,13 +260,13 @@ void SeqControl::handleRunButtonPress(int state)
 }
 
 /**
- * @brief Reset all sequences
- * 
+ * @brief This function is called when the reset button is pressed
+ *  It only performs a "soft" reset, meaning it only resets the sequence when the next step is reached
  */
 void SeqControl::handleResetButtonPress(int state)
 {
     if (state == LOW) {
-        this->resetAll();
+        dispatch_sequence_event(5, ACTION::RESET_ARM);
     }
 }
 

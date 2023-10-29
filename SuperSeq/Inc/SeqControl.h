@@ -44,6 +44,7 @@ public:
     int position; // relative position in polyrhythm array
     int step;
     bool waitForClock;
+    bool resetArmed; // when true, reset will be triggered on next step
     uint8_t selectedChannels;
 
     void init();

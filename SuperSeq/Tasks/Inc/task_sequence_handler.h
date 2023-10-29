@@ -8,6 +8,7 @@ enum class ACTION
     PULSE,
     ADVANCE,
     RESET,
+    RESET_ARM,
     MODIFY
 };
 typedef enum ACTION ACTION;
