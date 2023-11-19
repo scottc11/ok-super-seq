@@ -12,18 +12,15 @@ void SeqControl::init() {
     touch_pads->enable();
 
     setRunLED(0);
-
-    ext_step_int.rise(callback(this, &SeqControl::tpStepHandler));
-    ext_pulse_int.rise(callback(this, &SeqControl::tpPulseHandler));
-    ext_pulse_int.fall(callback(this, &SeqControl::tpPulseFallHandler));
-    tp_reset_int.rise(callback(this, &SeqControl::tpResetHandler));
-
-    
-
     for (int i = 0; i < NUM_CHANNELS; i++)
     {
         channels[i]->init();
     }
+    
+    ext_step_int.rise(callback(this, &SeqControl::tpStepHandler));
+    ext_pulse_int.rise(callback(this, &SeqControl::tpPulseHandler));
+    ext_pulse_int.fall(callback(this, &SeqControl::tpPulseFallHandler));
+    tp_reset_int.rise(callback(this, &SeqControl::tpResetHandler));
 }
 
 void SeqControl::tpStepHandler() {
@@ -69,6 +66,16 @@ void SeqControl::advanceAll() {
     } else {
         pulse = 0;
         
+        if (queue_stop) {
+            queue_stop = false;
+            dispatch_sequence_event(5, ACTION::STOP);
+        }
+
+        if (queue_start) {
+            queue_start = false;
+            dispatch_sequence_event(5, ACTION::START);
+        }
+
         // if reset armed, reset all sequences
         if (resetArmed) {
             dispatch_sequence_event(5, ACTION::RESET);
@@ -243,18 +250,10 @@ void SeqControl::handleRunButtonPress(int state)
 {
     if (state == LOW) {
         globalPlayback = !globalPlayback;
-        for (int i = 0; i < NUM_CHANNELS; i++)
-        {
-            if (globalPlayback)
-            {
-                setRunLED(1);
-                channels[i]->stop();
-            }
-            else
-            {
-                setRunLED(0);
-                channels[i]->start();
-            }
+        if (globalPlayback) {
+            queue_stop = true;
+        } else {
+            queue_start = true;
         }
     }
 }

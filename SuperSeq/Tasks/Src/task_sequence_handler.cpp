@@ -19,6 +19,22 @@ void task_sequence_handler(void *params)
         ACTION action = (ACTION)bitwise_slice(event, 0, 8);
         switch (action)
         {
+        case ACTION::START:
+            controller->setRunLED(0);
+            for (int i = 0; i < NUM_CHANNELS; i++)
+            {
+                controller->channels[i]->start();
+            }
+            break;
+        
+        case ACTION::STOP:
+            controller->setRunLED(1);
+            for (int i = 0; i < NUM_CHANNELS; i++)
+            {
+                controller->channels[i]->stop();
+            }
+            break;
+
         case ACTION::PULSE:
             controller->advanceAll();
             break;

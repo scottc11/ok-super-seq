@@ -45,6 +45,8 @@ public:
     int step;
     bool waitForClock;
     bool resetArmed; // when true, reset will be triggered on next step
+    bool queue_stop;
+    bool queue_start;
     uint8_t selectedChannels;
 
     void init();
