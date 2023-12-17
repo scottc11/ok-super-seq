@@ -58,7 +58,7 @@ public:
     Sequence *playbackModSource;
     int timeStamp;
 
-    int divisorIndex = 8;
+    int divisorIndex;
 
     int currPulse;
     int currStep;

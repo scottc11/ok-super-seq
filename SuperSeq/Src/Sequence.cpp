@@ -11,6 +11,7 @@ int CHANNEL_LED_PINS[4][8] = {
 
 void Sequence::init() {
     adc.setFilter(0.99);
+    this->setRhythm(POLYRHYTHM_DEFAULT_DIVISOR);
     playback = true;
     setPlaybackMode(pbMode); // interrupts trigger this function on startup, so re-calling it ensure all the settings are correct for each mode;
 }

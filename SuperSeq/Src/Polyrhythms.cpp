@@ -1,7 +1,8 @@
 #include "Polyrhythms.h"
 
 uint32_t POLYRHYTHMS[POLYRHYTHM_PULSES]; // 1536
-int DIVISORS[POLYRHYTHM_NUM_DIVISORS] = {128, 80, 64, 48, 32, 28, 24, 20, 16, 15, 14, 12, 8, 7, 6, 5, 4, 3, 2, 1};
+//                                                                                      ||  
+int DIVISORS[POLYRHYTHM_NUM_DIVISORS] = {256, 128, 112, 96, 80, 64, 48, 32, 28, 24, 20, 16, 15, 14, 13, 12, 8, 7, 6, 5, 4, 3, 2, 1};
 
 /**
  * @brief This function determines the precise position of each polyrhrthms trigger position across
