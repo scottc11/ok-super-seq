@@ -1,6 +1,6 @@
 #include "Sequence.h"
 
-const int PEDAL_PROGRESSION[16] = { 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 6 };
+const int PEDAL_PROGRESSION[16] = {0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 6};
 
 int CHANNEL_LED_PINS[4][8] = {
     {15, 16, 17, 18, 19, 20, 21, 22},
@@ -69,9 +69,15 @@ void Sequence::syncRhythmWithMaster()
  * 
  * @param value either 1 or -1
  */
-void Sequence::setRhythm(int value) {
-    divisorIndex += value;
-    
+void Sequence::setRhythm(int value, bool temporary /*false*/) {
+    if (temporary && !temporaryRhythmAdjustments) // only enter this block once (until alt button released)
+    {
+        temporaryRhythmAdjustments = true;
+        savedDivisorIndex = divisorIndex;
+    }
+
+    divisorIndex = value;
+
     if (divisorIndex > POLYRHYTHM_NUM_DIVISORS) {
         divisorIndex = POLYRHYTHM_NUM_DIVISORS - 1;
     } else if (divisorIndex < 0) {
@@ -203,6 +209,10 @@ void Sequence::reset() {
     currPedalStep = 0;
     activateStep(currStep, prevStep);
 }
+
+// TODO: when temporary clock adjustments are made, you need to be able to return the POSITION of the 
+// sequence to where it was before the adjustments were made, as if the original tempo had been 
+// progressing the whole time
 
 // this function needs to become the default mode function. Its already setup for it.
 void Sequence::handlePingPongMode() {

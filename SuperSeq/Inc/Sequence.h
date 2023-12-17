@@ -63,6 +63,8 @@ public:
     int timeStamp;
 
     int divisorIndex;
+    int savedDivisorIndex;
+    bool temporaryRhythmAdjustments;
 
     int currPulse;
     int currStep;
@@ -82,7 +84,7 @@ public:
 
     void setPlaybackMode(PlaybackMode mode);
     void setDirection(Direction _direction);
-    void setRhythm(int value);
+    void setRhythm(int value, bool temporary = false);
     void setLength(int value);
     void syncRhythmWithMaster();
 

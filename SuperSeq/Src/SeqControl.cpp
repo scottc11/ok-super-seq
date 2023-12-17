@@ -193,7 +193,7 @@ void SeqControl::handleEncoder(int channel, int bit_position, uint16_t pin_state
         }
         else
         {
-            channels[channel]->setRhythm(-1);
+            channels[channel]->setRhythm(channels[channel]->divisorIndex - 1, altPressed);
         }
     }
     else if (enc_chan_a_state == 0 && enc_chan_b_state == 0) // direction left
@@ -204,7 +204,7 @@ void SeqControl::handleEncoder(int channel, int bit_position, uint16_t pin_state
         }
         else
         {
-            channels[channel]->setRhythm(1);
+            channels[channel]->setRhythm(channels[channel]->divisorIndex + 1, altPressed);
         }
     }
 }
@@ -212,7 +212,11 @@ void SeqControl::handleEncoder(int channel, int bit_position, uint16_t pin_state
 void SeqControl::handleEncoderButton(int channel, int state)
 {
     if (state == LOW) {
-        channels[channel]->syncRhythmWithMaster();
+        if (channels[channel]->temporaryRhythmAdjustments) {
+            channels[channel]->savedDivisorIndex = channels[channel]->divisorIndex;
+        } else {
+            channels[channel]->syncRhythmWithMaster();
+        }
     }
 }
 
@@ -254,6 +258,7 @@ void SeqControl::handleAltButtonPress(int state)
             }
             return;
         }
+        setAltLED(true);
         altPressed = true;
     } else {
         if (alternateModeActive) {
@@ -261,6 +266,15 @@ void SeqControl::handleAltButtonPress(int state)
         } else {
             setAltLED(false);
             altPressed = false;
+            
+            for (int i = 0; i < 4; i++) // reset all channels to their saved divisors
+            {
+                if (channels[i]->temporaryRhythmAdjustments)
+                {
+                    channels[i]->temporaryRhythmAdjustments = false;
+                    channels[i]->setRhythm(channels[i]->savedDivisorIndex);
+                }
+            }
         }
     }
 }
