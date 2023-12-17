@@ -8,6 +8,10 @@
 #include "Polyrhythms.h"
 #include "task_handles.h"
 
+#define PWM_SET_LENGTH 20
+#define PWM_DISPLAY_LENGTH 3
+#define PWM_PROGRESS 127
+
 class Sequence {
 public:
 
@@ -108,5 +112,5 @@ public:
 
     void setLED(int step, int pwm);
     void clearLEDs();
-    void drawLength();
+    void drawLength(uint8_t pwm = PWM_SET_LENGTH);
 };

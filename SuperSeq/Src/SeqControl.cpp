@@ -320,7 +320,9 @@ void SeqControl::activateLengthMode(bool activate)
         for (int i = 0; i < 4; i++)
         {
             channels[i]->settingLength = false;
-            channels[i]->clearLEDs();
+#ifdef PLAYBACK_SHOWS_SEQ_LENGTH
+            channels[i]->drawLength(PWM_DISPLAY_LENGTH);
+#endif
             channels[i]->activateStep(channels[i]->currStep, channels[i]->prevStep);
         }
     }

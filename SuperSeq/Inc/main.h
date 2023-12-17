@@ -57,6 +57,9 @@
 #define MUX_4_B PB_14
 #define MUX_4_C PB_13
 
+
+#define PLAYBACK_SHOWS_SEQ_LENGTH 1
+
 enum ISR_ID
 {
     ISR_ID_GPIO1,

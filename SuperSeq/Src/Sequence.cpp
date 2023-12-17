@@ -24,6 +24,9 @@ void Sequence::setPlaybackMode(PlaybackMode mode) {
     pbMode = mode;
     playback = true;
     clearLEDs();
+#ifdef PLAYBACK_SHOWS_SEQ_LENGTH
+    drawLength(PWM_DISPLAY_LENGTH);
+#endif
     activateStep(currStep, prevStep);
     switch (pbMode)
     {
@@ -286,7 +289,11 @@ void Sequence::handleReleasedStep(int step)
 void Sequence::activateStep(int curr, int prev) {
     mux.activateChannel(curr);
     if (!settingLength) {
+#ifdef PLAYBACK_SHOWS_SEQ_LENGTH
+        setLED(lastStepIlluminated, 3);
+#else
         setLED(lastStepIlluminated, 0);
+#endif
         lastStepIlluminated = curr;
         setLED(curr, 127);
     }
@@ -305,11 +312,11 @@ void Sequence::clearLEDs() {
     
 }
 
-void Sequence::drawLength()
+void Sequence::drawLength(uint8_t pwm)
 {
     for (int i = 0; i < length; i++)
     {
-        setLED(i, 20);
+        setLED(i, pwm);
     }
 }
 
