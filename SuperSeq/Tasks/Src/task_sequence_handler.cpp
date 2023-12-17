@@ -37,7 +37,12 @@ void task_sequence_handler(void *params)
 
         case ACTION::PULSE:
             controller->advanceAll();
+            if (controller->settingLength && controller->pulse % 8 == 0)
+            {
+                controller->blinkLEDs();
+            }
             break;
+
         case ACTION::ADVANCE:
             for (int i = 0; i < 4; i++)
             {

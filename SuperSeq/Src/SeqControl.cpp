@@ -326,4 +326,20 @@ void SeqControl::activateLengthMode(bool activate)
             channels[i]->activateStep(channels[i]->currStep, channels[i]->prevStep);
         }
     }
+    settingLength = activate;
+}
+
+void SeqControl::blinkLEDs() {
+    blinkState = !blinkState;
+    for (int i = 0; i < 4; i++)
+    {
+        if (blinkState)
+        {
+            channels[i]->drawLength(PWM_SET_LENGTH);
+        }
+        else
+        {
+            channels[i]->drawLength(5);
+        }
+    }
 }

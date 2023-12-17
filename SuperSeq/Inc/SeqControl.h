@@ -43,6 +43,8 @@ public:
     int pulse;
     int position; // relative position in polyrhythm array
     int step;
+    bool settingLength;
+    bool blinkState; // for blinking sequence LEDs when setting sequence length
     bool waitForClock;
     bool resetArmed; // when true, reset will be triggered on next step
     bool queue_stop;
@@ -60,6 +62,7 @@ public:
     void resetAll();
 
     void setRunLED(bool state);
+    void blinkLEDs();
 
     void handleTouchInterrupt();
     void onTouch(uint8_t pad);
