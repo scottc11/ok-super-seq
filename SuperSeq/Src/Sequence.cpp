@@ -289,11 +289,10 @@ void Sequence::handleReleasedStep(int step)
 void Sequence::activateStep(int curr, int prev) {
     mux.activateChannel(curr);
     if (!settingLength) {
-#ifdef PLAYBACK_SHOWS_SEQ_LENGTH
-        setLED(lastStepIlluminated, 3);
-#else
-        setLED(lastStepIlluminated, 0);
-#endif
+        if (lastStepIlluminated <= length - 1)
+        {
+            setLED(lastStepIlluminated, PLAYBACK_SHOWS_SEQ_LENGTH ? 3 : 0);
+        }
         lastStepIlluminated = curr;
         setLED(curr, 127);
     }

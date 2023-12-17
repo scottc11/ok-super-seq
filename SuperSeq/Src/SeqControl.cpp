@@ -109,10 +109,17 @@ void SeqControl::handleTouchInterrupt()
 
 void SeqControl::onTouch(uint8_t pad)
 {
-    
     if (pad < 8)
-    {        
+    {
         int touchedStep = TOUCH_PAD_MAP[pad];
+        
+        // override default behavior when alt button is pressed, or alternate mode is active
+        if (altPressed || alternateModeActive) {
+            alternateModeActive = true;
+            handleAltTouchPadFunctions(touchedStep);
+            return;
+        }
+        
         for (int i = 0; i < NUM_CHANNELS; i++)
         {
 
@@ -240,9 +247,21 @@ void SeqControl::handleSlideSwitch(int channel, int position, int state)
 void SeqControl::handleAltButtonPress(int state)
 {
     if (state == LOW) {
-        activateLengthMode(true); // enable length setting mode
+        if (alternateModeActive) {
+            alternateModeActive = false;
+            if (settingLength) {
+                activateLengthMode(false);
+            }
+            return;
+        }
+        altPressed = true;
     } else {
-        activateLengthMode(false); // disable length setting mode
+        if (alternateModeActive) {
+            setAltLED(true);
+        } else {
+            setAltLED(false);
+            altPressed = false;
+        }
     }
 }
 
@@ -301,6 +320,13 @@ void SeqControl::handleModSwitch(int targetIndex, int sourceIndex, int state, in
     }
 }
 
+void SeqControl::setAltLED(bool state)
+{
+    int currState = gpio3.digitalRead(MCP23017_PORTB);
+    currState = bitwise_write_bit(currState, GPIO3::ALT_LED - 8, state);
+    gpio3.digitalWrite(MCP23017_PORTB, currState);
+}
+
 void SeqControl::setRunLED(bool state)
 {
     int currState = gpio3.digitalRead(MCP23017_PORTB);
@@ -341,5 +367,17 @@ void SeqControl::blinkLEDs() {
         {
             channels[i]->drawLength(5);
         }
+    }
+}
+
+void SeqControl::handleAltTouchPadFunctions(uint8_t pad)
+{
+    switch (pad)
+    {
+    case 0: // LENGTH
+        activateLengthMode(true);
+        break;
+    default:
+        break;
     }
 }

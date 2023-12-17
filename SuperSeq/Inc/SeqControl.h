@@ -43,11 +43,14 @@ public:
     int pulse;
     int position; // relative position in polyrhythm array
     int step;
+
+    bool altPressed;
+    bool alternateModeActive;
     bool settingLength;
     bool blinkState; // for blinking sequence LEDs when setting sequence length
     bool waitForClock;
     bool resetArmed; // when true, reset will be triggered on next step
-    bool queue_stop;
+    bool queue_stop; // start and stop actions only happen on next step
     bool queue_start;
     uint8_t selectedChannels;
 
@@ -61,6 +64,7 @@ public:
     void advanceAll();
     void resetAll();
 
+    void setAltLED(bool state);
     void setRunLED(bool state);
     void blinkLEDs();
 
@@ -69,6 +73,7 @@ public:
     void onRelease(uint8_t pad);
 
     void activateLengthMode(bool activate);
+    void handleAltTouchPadFunctions(uint8_t pad);
 
     void handleEncoder(int channel, int bit_position, uint16_t pin_states);
     void handleEncoderButton(int channel, int state);
