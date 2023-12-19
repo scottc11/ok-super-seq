@@ -58,19 +58,14 @@ void Sequence::syncRhythmWithMaster()
 }
 
 /**
- * @brief
- *
- * NOTE: Polythrythms and Polymeters are two very different things.
+ * @brief sets the divisor index of the sequence, which consequently sets the polyrhythm of the sequence
  * 
- * Polyrhythms: groups of different numbers of beats, but each group takes the same amount of time to return to "beat 1"
- * Polymeters:  two different time signiatures / meters, playing back at the same time. Each beat of a meter steps according to the tempo, but the phrases have different lengths
- *
- * TODO: because of this, you actually need to devide everything by 4? So (96 * 4) / diviser
- * 
- * @param value either 1 or -1
+ * @param value between 0 and 32
  */
-void Sequence::setRhythm(int value, bool temporary /*false*/) {
-    if (temporary && !temporaryRhythmAdjustments) // only enter this block once (until alt button released)
+void Sequence::setRhythm(int value, bool temporary /*false*/)
+{
+    // only enter this block once (until alt button released)
+    if (temporary && !temporaryRhythmAdjustments)
     {
         temporaryRhythmAdjustments = true;
         savedDivisorIndex = divisorIndex;
