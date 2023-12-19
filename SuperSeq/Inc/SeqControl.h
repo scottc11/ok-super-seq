@@ -52,7 +52,8 @@ public:
     bool resetArmed; // when true, reset will be triggered on next step
     bool queue_stop; // start and stop actions only happen on next step
     bool queue_start;
-    uint8_t selectedChannels;
+    
+    uint8_t selectedChannels; // bitfield for which channels are selected (via touch pads)
 
     void init();
     

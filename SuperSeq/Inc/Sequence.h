@@ -108,7 +108,7 @@ public:
     void handlePedalMode();
 
     void handleTouchedStep(int step);
-    void handleReleasedStep(int step);
+    void handleReleasedStep(int step, int lastTouchedStep, bool activateLastStep);
 
     void activateStep(int curr, int prev);
 

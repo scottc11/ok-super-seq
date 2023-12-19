@@ -280,10 +280,15 @@ void Sequence::handleTouchedStep(int step)
     
 }
 
-void Sequence::handleReleasedStep(int step)
+void Sequence::handleReleasedStep(int step, int lastTouchedStep, bool activateLastStep)
 {
+    override = activateLastStep ? true : false;
     if (pbMode != PlaybackMode::TOUCH) {
-        activateStep(currStep, currTouchedStep);
+        if (activateLastStep)
+        {
+            currStep = lastTouchedStep;
+        }
+        activateStep(currStep, step);
     }
     if (!playback) {
         clockOut.write(0);
