@@ -1,7 +1,5 @@
 #include "SeqControl.h"
 
-int PAD_MAP[12] = {0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 1, 0};
-
 void SeqControl::init() {
 
     // initialize channel touch pads
@@ -76,7 +74,6 @@ void SeqControl::advanceAll() {
             dispatch_sequence_event(5, ACTION::START);
         }
 
-        // if reset armed, reset all sequences
         if (resetArmed) {
             dispatch_sequence_event(5, ACTION::RESET);
             resetArmed = false;
@@ -119,34 +116,29 @@ void SeqControl::onTouch(uint8_t pad)
             handleAltTouchPadFunctions(touchedStep);
             return;
         }
-        
+
         for (int i = 0; i < NUM_CHANNELS; i++)
         {
-
-            // set a flag which tells the encoders to only temprarily increase/decrease the tempo, so that
-            // on release, the clock dividers get set back to what they were prior to the touch
-
-            // when globalPlayback == false:
-            // don't let touch snap back to the currStep
-            // trigger clock outs
-
-            // when channel touch pad is touched, these touch pads only effect that channel
-
-            // touch-release needs to snap back to the most recently touched pad (thatis still touched)
-
-            if (selectedChannels != 0) {
+            // touch-release needs to snap back to the most recently touched pad (that is still touched)
+            
+            // if a channel is selected, only apply the touch event to that channel
+            if (selectedChannels != 0)
+            {
                 if (channels[i]->selected) {
                     channels[i]->override = true;
                     channels[i]->handleTouchedStep(touchedStep);
                 }
-            } else {
+            }
+            else // if no channels are selected, apply the touch event to all channels
+            {
                 channels[i]->override = true;
                 channels[i]->handleTouchedStep(touchedStep);
             }
         }
     } else {
-        channels[PAD_MAP[pad]]->select(true);
-        selectedChannels = bitwise_set_bit(selectedChannels, PAD_MAP[pad]);
+        channels[TOUCH_PAD_MAP[pad]]->select(true);
+        selectedChannels = bitwise_set_bit(selectedChannels, TOUCH_PAD_MAP[pad]);
+        // maybe clear the touch pads linked list here?
     }
     
 }
@@ -155,21 +147,31 @@ void SeqControl::onRelease(uint8_t pad)
 {
     if (pad < 8) {
         int touchedStep = TOUCH_PAD_MAP[pad];
+
+        // determine if another pad is still touched, and whether or not to activate that pad
+        int lastTouchedStep = touch_pads->getLastTouchedNode();
+        bool activateLastStep = false;
+        if (lastTouchedStep != 0xFF && lastTouchedStep < 8) // only handle specific touch pads (8, 9, 10, 11 are 'select' pads)
+        {
+            activateLastStep = true;
+            lastTouchedStep = TOUCH_PAD_MAP[lastTouchedStep];
+        }
+
         for (int i = 0; i < NUM_CHANNELS; i++)
         {
             if (selectedChannels != 0) {
                 if (channels[i]->selected) {
-                    channels[i]->handleReleasedStep(touchedStep);
+                    channels[i]->handleReleasedStep(touchedStep, lastTouchedStep, activateLastStep);
+                } else {
                     channels[i]->override = false;
                 }
             } else {
-                channels[i]->handleReleasedStep(touchedStep);
-                channels[i]->override = false;
+                channels[i]->handleReleasedStep(touchedStep, lastTouchedStep, activateLastStep);
             }
         }
     } else {
-        channels[PAD_MAP[pad]]->select(false);
-        selectedChannels = bitwise_clear_bit(selectedChannels, PAD_MAP[pad]);
+        channels[TOUCH_PAD_MAP[pad]]->select(false);
+        selectedChannels = bitwise_clear_bit(selectedChannels, TOUCH_PAD_MAP[pad]);
     }
 }
 

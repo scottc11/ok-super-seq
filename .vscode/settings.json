@@ -2,7 +2,10 @@
     "files.associations": {
         "istream": "cpp",
         "ranges": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "span": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
