@@ -137,7 +137,14 @@ void Sequence::handle_down_pulse(int pulse)
     }
 }
 
-int Sequence::num_triggers(int pulse) {
+/**
+ * @brief returns the number of triggers that should occur on the current pulse
+ * 
+ * @param pulse 
+ * @return int 
+ */
+int Sequence::num_triggers(int pulse)
+{
     int trigger_count = 0;
     if (bitwise_read_bit(POLYRHYTHMS[pulse], divisorIndex)) {
         trigger_count += 1;
@@ -205,11 +212,7 @@ void Sequence::reset() {
     activateStep(currStep, prevStep);
 }
 
-// TODO: when temporary clock adjustments are made, you need to be able to return the POSITION of the 
-// sequence to where it was before the adjustments were made, as if the original tempo had been 
-// progressing the whole time
-
-// this function needs to become the default mode function. Its already setup for it.
+// TODO: this function needs to become the default mode function. Its already setup for it.
 void Sequence::handlePingPongMode() {
     if (direction == FORWARD)
     {
@@ -268,7 +271,7 @@ void Sequence::handleTouchedStep(int step)
 {
     prevTouchedStep = currTouchedStep;
     currTouchedStep = step;
-    activateStep(currTouchedStep, currStep);
+        activateStep(currTouchedStep, currStep);
     if (!playback) {
         clockOut.write(1);
     }
@@ -279,11 +282,11 @@ void Sequence::handleReleasedStep(int step, int lastTouchedStep, bool activateLa
 {
     override = activateLastStep ? true : false;
     if (pbMode != PlaybackMode::TOUCH) {
-        if (activateLastStep)
-        {
-            currStep = lastTouchedStep;
+        if (activateLastStep) {
+            activateStep(lastTouchedStep, step);
+        } else {
+            activateStep(prevStep, step); // the prevStep needs to be used, because presently we advance the sequence immediately after each event (on the down pulse)
         }
-        activateStep(currStep, step);
     }
     if (!playback) {
         clockOut.write(0);
