@@ -60,6 +60,7 @@ void task_main(void *pvParameters)
 
     controller.init();
 
+    // update channels based on switch positions on startup
     handle_gpio_interrupt(&gpio1, true);
     handle_gpio_interrupt(&gpio2, true);
     handle_gpio_interrupt(&gpio3, true);

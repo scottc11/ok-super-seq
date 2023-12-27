@@ -241,11 +241,11 @@ void gpio2_handler(int pin, int state)
         break;
 
     case GPIO2::CS_A_UP:
-        controller.handleClockSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, CS_A_UP));
+        controller.handleClockSwitch(0, 1, state, bitwise_read_bit(gpio2.currPinStates, CS_A_DOWN));
         break;
 
     case GPIO2::CS_A_DOWN:
-        controller.handleClockSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, CS_A_DOWN));
+        controller.handleClockSwitch(1, 0, state, bitwise_read_bit(gpio2.currPinStates, CS_A_UP));
         break;
 
     case GPIO2::MS_A_UP:
